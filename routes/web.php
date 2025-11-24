@@ -22,37 +22,29 @@ use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Http;
 
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
-// ====================================================
-// 1. PUBLIC ROUTES (Bisa diakses siapa saja)
-// ====================================================
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-// ====================================================
-// 2. PROTECTED ROUTES (Harus Login)
-// ====================================================
+
 Route::middleware(['auth'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // ====================================================
-    // GROUP: AKSES UMUM (Admin, NOC, CEMS Operator)
-    // ====================================================
     Route::middleware(['role:Admin,NOC,CEMS Operator'])->group(function () {
 
         // Dashboard
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [DashboardController::class, 'index']);
 
-        // Monitoring Report
-        Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+        // Halaman Utama
+        Route::get('/monitoring-report', [MonitoringController::class, 'index'])->name('monitoring.index');
 
+        // API Data untuk Tabel & Chart (Dipanggil via AJAX)
+        Route::get('/monitoring/data', [MonitoringController::class, 'getData'])->name('monitoring.data');
+        Route::get('/monitoring/chart', [MonitoringController::class, 'getChartData'])->name('monitoring.chart');
+
+        // Support (Tickets & FAQ)
         Route::prefix('support')->name('support.')->group(function () {
 
             // List Ticket (Table)
@@ -143,9 +135,20 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
-        // Others (Notification & Parameter)
-        Route::get('/notification-medias', [NotificationMediaController::class, 'index'])->name('notification-medias');
+       // Notification Medias Routes
+       Route::get('/notification-medias', [NotificationMediaController::class, 'index'])->name('notification-medias');
+       Route::get('/notification-medias/data', [NotificationMediaController::class, 'getData'])->name('notification-medias.data');
+       Route::post('/notification-medias', [NotificationMediaController::class, 'store'])->name('notification-medias.store');
+       Route::put('/notification-medias/{id}', [NotificationMediaController::class, 'update'])->name('notification-medias.update');
+       Route::delete('/notification-medias/{id}', [NotificationMediaController::class, 'destroy'])->name('notification-medias.destroy');
+
+
+        // Receiver Notification Routes
         Route::get('/receiver-notification', [ReceiverNotificationController::class, 'index'])->name('receiver-notification');
+        Route::get('/receiver-notification/data', [ReceiverNotificationController::class, 'getData'])->name('receiver-notification.data');
+        Route::post('/receiver-notification', [ReceiverNotificationController::class, 'store'])->name('receiver-notification.store');
+        Route::put('/receiver-notification/{id}', [ReceiverNotificationController::class, 'update'])->name('receiver-notification.update');
+        Route::delete('/receiver-notification/{id}', [ReceiverNotificationController::class, 'destroy'])->name('receiver-notification.destroy');
 
         // Parameter Routes
         Route::get('/parameter', [ParameterController::class, 'index'])->name('parameter');
