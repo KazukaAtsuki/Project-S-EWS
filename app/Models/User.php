@@ -34,25 +34,34 @@ class User extends Authenticatable
         ];
     }
 
-    // Scope untuk filter berdasarkan role
+    /**
+     * FUNCTION BARU: hasRole
+     */
+    public function hasRole($roles)
+    {
+        if (is_array($roles)) {
+            return in_array($this->role, $roles);
+        }
+        return $this->role === $roles;
+    }
+
+    // --- Helper Bawaan Anda ---
+
     public function scopeRole($query, $role)
     {
         return $query->where('role', $role);
     }
 
-    // Check if user is admin
     public function isAdmin(): bool
     {
         return $this->role === 'Admin';
     }
 
-    // Check if user is NOC
     public function isNOC(): bool
     {
         return $this->role === 'NOC';
     }
 
-    // Check if user is CEMS Operator
     public function isCEMSOperator(): bool
     {
         return $this->role === 'CEMS Operator';

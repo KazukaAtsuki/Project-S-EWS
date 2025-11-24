@@ -50,10 +50,6 @@
                         <div data-i18n="Tickets">Tickets</div>
                     </a>
                 </li>
-                <li class="menu-item {{ request()->routeIs('support.faq') ? 'active' : '' }}">
-                    <a href="{{ route('support.faq') }}" class="menu-link">
-                        <div data-i18n="FAQ">FAQ</div>
-                    </a>
                 </li>
             </ul>
         </li>
@@ -97,7 +93,7 @@
         </li>
         <li class="menu-item">
             <a href="{{ route('accounts.security') }}" class="menu-link">
-                <div data-i18n="Security">Security</div>
+                <div data-i18n="Change Password">Change Password</div>
             </a>
         </li>
     </ul>

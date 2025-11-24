@@ -8,17 +8,23 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('companies', function (Blueprint $table) {
-            // Hapus kolom industry string lama
-            if (Schema::hasColumn('companies', 'industry')) {
-                $table->dropColumn('industry');
-            }
+        // Gunakan Schema::create karena kita membangun ulang tabelnya
+        Schema::create('companies', function (Blueprint $table) {
+            $table->id();
+            $table->string('company_code')->unique(); // Kode perusahaan (misal: TEST-PT)
+            $table->string('name'); // Nama Perusahaan
 
-            // Tambah foreign key ke industries
+            // --- INI BAGIAN UTAMA YANG DIUBAH ---
+            // Kita pakai foreignId untuk relasi ke tabel 'industries'
+            // Pastikan tabel 'industries' dibuat SEBELUM tabel 'companies' (tanggal filenya lebih lama)
             $table->foreignId('industry_id')
-                ->nullable()
-                ->constrained('industries')
-                ->onDelete('set null');
+                  ->constrained('industries')
+                  ->onDelete('cascade');
+            // ------------------------------------
+
+            $table->string('contact_person');
+            $table->string('contact_phone')->nullable();
+            $table->timestamps();
         });
     }
 
