@@ -19,8 +19,14 @@ class Stack extends Model
     ];
 
     // Relasi ke Company
-    public function companyRelation()
+    public function company()
     {
         return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    // Alias for backward compatibility
+    public function companyRelation()
+    {
+        return $this->company();
     }
 }
