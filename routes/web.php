@@ -63,9 +63,12 @@ Route::middleware(['auth'])->group(function () {
         // Settings (General & Notification)
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/general', [SettingsController::class, 'general'])->name('general');
-            Route::get('/notifications', [SettingsController::class, 'notifications'])->name('notifications');
-        });
 
+            // Notification Settings
+            Route::get('/notifications', [SettingsController::class, 'notifications'])->name('notifications');
+            Route::put('/notifications', [SettingsController::class, 'updateNotifications'])->name('notifications.update');
+        });
+        
         // Accounts (Profile & Security)
         Route::prefix('accounts')->name('accounts.')->group(function () {
             Route::get('/profile', [AccountController::class, 'profile'])->name('profile');

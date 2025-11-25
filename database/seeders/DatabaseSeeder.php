@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,11 +12,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Panggil seeder berurutan
         $this->call([
-            UserSeeder::class,          // 1. Bikin Akun Login
-            EwsSimulationSeeder::class, // 2. Bikin Company & Stack
-            ParameterSeeder::class,  // 3. Bikin Parameter (Jika file ini ada, uncomment)
+            // 1. Akun & Master Data Dasar
+            UserSeeder::class,              // Membuat Admin, NOC, Operator
+            NotificationMediaSeeder::class, // Membuat Web, Telegram, Email, WA
+            ParameterSeeder::class,         // Membuat Parameter (CO, NO2, dll) & Threshold
+
+            // 2. Data Simulasi Struktur EWS (Industry -> Company -> Stack)
+            EwsSimulationSeeder::class,
+
+            // 3. Konfigurasi & Relasi
+            ReceiverNotificationSeeder::class, // Menghubungkan Company dengan Media Notifikasi
+            NotificationSettingSeeder::class,  // Setting On/Off Notifikasi untuk Admin
+
+            // 4. Data Dummy Grafik (Agar Monitoring Report bagus)
+            MonitoringLogSeeder::class,
         ]);
     }
 }
