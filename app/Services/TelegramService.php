@@ -32,21 +32,16 @@ class TelegramService
 
         if (empty($this->botToken)) {
             Log::error('Telegram bot token is not configured');
-            return [
-                'ok' => false,
-                'error' => 'Bot token not configured'
-            ];
+            return ['ok' => false, 'error' => 'Bot token not configured'];
         }
 
         if (empty($chatId)) {
             Log::error('Telegram chat ID is not configured');
-            return [
-                'ok' => false,
-                'error' => 'Chat ID not configured'
-            ];
+            return ['ok' => false, 'error' => 'Chat ID not configured'];
         }
 
         try {
+            // Construct URL manual agar lebih aman
             $url = $this->apiUrl . $this->botToken . '/sendMessage';
 
             $response = Http::post($url, [
@@ -55,23 +50,11 @@ class TelegramService
                 'parse_mode' => $parseMode,
             ]);
 
-            $result = $response->json();
-
-            if (!$response->successful() || !($result['ok'] ?? false)) {
-                Log::error('Failed to send Telegram message', [
-                    'response' => $result,
-                    'status' => $response->status()
-                ]);
-            }
-
-            return $result;
+            return $response->json();
 
         } catch (\Exception $e) {
-            Log::error('Exception while sending Telegram message: ' . $e->getMessage());
-            return [
-                'ok' => false,
-                'error' => $e->getMessage()
-            ];
+            Log::error('Telegram Error: ' . $e->getMessage());
+            return ['ok' => false, 'error' => $e->getMessage()];
         }
     }
 

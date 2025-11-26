@@ -14,10 +14,10 @@
 
         <div class="navbar-nav-right d-flex align-items-center justify-content-between w-100" id="navbar-collapse">
 
-            <!-- LEFT SIDE: Search & Date -->
+            <!-- LEFT SIDE: Search & Widgets -->
             <div class="d-flex align-items-center gap-4">
 
-                <!-- Modern Search Bar -->
+                <!-- 1. Modern Search Bar -->
                 <div class="navbar-nav align-items-center">
                     <div class="nav-item d-flex align-items-center">
                         <div class="input-group samu-search-group">
@@ -25,20 +25,36 @@
                                 <i class="bx bx-search fs-4 text-muted"></i>
                             </span>
                             <input type="text" class="form-control border-0 bg-transparent shadow-none"
-                                   placeholder="Search data..." aria-label="Search...">
+                                   placeholder="Search..." aria-label="Search...">
                             <span class="input-group-text border-0 bg-transparent pe-3">
-                                <span class="badge samu-badge-shortcut">Ctrl + /</span>
+                                <span class="badge samu-badge-shortcut">Ctrl + K</span>
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Date Display with Vertical Divider -->
+                <!-- 2. System Status Widget (NEW) -->
+                <div class="d-none d-xl-flex align-items-center samu-widget-box px-3 py-1 rounded-pill bg-light">
+                    <span class="position-relative d-flex h-2 w-2 me-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                    </span>
+                    <div class="d-flex flex-column">
+                        <small class="text-muted" style="font-size: 0.65rem; line-height: 1;">SYSTEM STATUS</small>
+                        <span class="text-success fw-bold" style="font-size: 0.75rem;">OPTIMAL</span>
+                    </div>
+                </div>
+
+                <!-- 3. Date & Live Clock (NEW) -->
                 <div class="d-none d-md-flex align-items-center">
                     <div class="samu-divider me-3"></div>
                     <div>
-                        <small class="text-muted d-block" style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.5px;">TODAY</small>
-                        <span class="samu-date-text">{{ now()->format('D, d M Y') }}</span>
+                        <small class="text-muted d-block" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px;">
+                            {{ strtoupper(now()->format('l, d M')) }}
+                        </small>
+                        <span class="samu-date-text" id="liveClock">
+                            {{ now()->format('H:i') }}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -46,6 +62,13 @@
             <!-- RIGHT SIDE: Notification & Profile -->
             <ul class="navbar-nav flex-row align-items-center ms-auto">
                 @auth
+
+                <!-- Greeting Text (NEW) -->
+                <li class="nav-item me-3 d-none d-lg-block">
+                    <span class="text-muted" style="font-size: 0.85rem;">Hello, </span>
+                    <span class="fw-bold text-dark">{{ explode(' ', auth()->user()->name)[0] }}</span>
+                </li>
+
                 <!-- Notification -->
                 <li class="nav-item me-3">
                     <a class="nav-link position-relative samu-icon-btn" href="javascript:void(0);">
@@ -142,12 +165,11 @@
 <!-- CSS Khusus Navbar SAMU -->
 @push('styles')
 <style>
-    /* Variables sesuai Logo SAMU */
     :root {
         --samu-gold: #D4A12A;
         --samu-blue: #1E6BA8;
         --samu-cyan: #2EBAC6;
-        --samu-bg-glass: rgba(255, 255, 255, 0.9);
+        --samu-bg-glass: rgba(255, 255, 255, 0.95);
     }
 
     /* 1. Navbar Base */
@@ -155,19 +177,17 @@
         backdrop-filter: blur(12px);
         background-color: var(--samu-bg-glass) !important;
         z-index: 1000;
-        border-bottom: 3px solid transparent;
-        border-image: linear-gradient(to right, var(--samu-gold), var(--samu-blue), var(--samu-cyan));
-        border-image-slice: 1;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02) !important;
     }
 
     /* 2. Search Bar Modern */
     .samu-search-group {
         background-color: #f3f4f6;
-        border-radius: 50px;
+        border-radius: 12px;
         border: 1px solid transparent;
         transition: all 0.3s ease;
-        width: 280px;
+        width: 260px;
     }
 
     .samu-search-group:hover,
@@ -179,30 +199,53 @@
 
     .samu-badge-shortcut {
         background-color: white;
-        color: var(--samu-blue);
-        border: 1px solid #e0e0e0;
+        color: #888;
+        border: 1px solid #ddd;
         border-radius: 6px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        padding: 4px 8px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 3px 6px;
     }
 
-    /* 3. Date & Divider */
+    /* 3. System Widget */
+    .samu-widget-box {
+        border: 1px solid #eee;
+        background-color: #fafafa;
+    }
+
+    /* Pulsing Dot Animation */
+    .h-2 { height: 0.5rem; }
+    .w-2 { width: 0.5rem; }
+    .rounded-full { border-radius: 9999px; }
+    .bg-success { background-color: #10b981; }
+    .absolute { position: absolute; }
+    .relative { position: relative; }
+    .inline-flex { display: inline-flex; }
+
+    @keyframes ping {
+        75%, 100% { transform: scale(2); opacity: 0; }
+    }
+    .animate-ping {
+        animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    /* 4. Date & Divider */
     .samu-divider {
         width: 1px;
-        height: 30px;
-        background: linear-gradient(to bottom, transparent, #d1d5db, transparent);
+        height: 35px;
+        background: #e0e0e0;
     }
 
     .samu-date-text {
         color: #2b2c40;
-        font-weight: 700;
-        font-size: 0.9rem;
+        font-weight: 800;
+        font-size: 1.1rem;
+        line-height: 1;
     }
 
-    /* 4. Icons & Notifications */
+    /* 5. Icons & Notifications */
     .samu-icon-btn {
-        color: #566a7f;
+        color: #697a8d;
         transition: all 0.3s ease;
     }
 
@@ -212,13 +255,13 @@
     }
 
     .samu-badge-notif {
-        background: var(--samu-gold) !important; /* Warna Emas untuk notif */
+        background: var(--samu-gold) !important;
         border: 2px solid white;
         top: 5px !important;
         right: 5px !important;
     }
 
-    /* 5. Avatar & Profile */
+    /* 6. Avatar Ring Gradient */
     .samu-avatar-initial {
         background: linear-gradient(135deg, var(--samu-blue), var(--samu-cyan));
         color: white;
@@ -229,7 +272,7 @@
     .samu-avatar-container {
         padding: 2px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--samu-gold), var(--samu-cyan)); /* Ring Gradient */
+        background: linear-gradient(135deg, var(--samu-gold), var(--samu-cyan));
         transition: transform 0.3s ease;
     }
 
@@ -237,34 +280,45 @@
         transform: scale(1.05);
     }
 
-    /* 6. Dropdown Menu Rapi */
+    /* 7. Dropdown Menu */
     .samu-dropdown-menu {
         border: none;
-        border-radius: 12px;
-        padding: 0.5rem;
-        margin-top: 10px !important;
+        border-radius: 16px;
+        padding: 0.75rem;
+        margin-top: 15px !important;
     }
 
     .samu-dropdown-menu .dropdown-item {
-        border-radius: 8px;
+        border-radius: 10px;
         padding: 10px 15px;
         font-weight: 500;
         color: #566a7f;
-        transition: all 0.2s ease;
         margin-bottom: 2px;
     }
 
-    /* Efek Hover pada Menu */
     .samu-dropdown-menu .dropdown-item:hover {
-        background-color: #f0f7ff; /* Biru sangat muda */
+        background-color: #f0f7ff;
         color: var(--samu-blue);
-        padding-left: 20px; /* Efek geser sedikit */
+        transform: translateX(3px);
     }
 
-    /* Icon Colors */
     .samu-icon-gold { color: var(--samu-gold); }
     .samu-icon-blue { color: var(--samu-blue); }
     .samu-icon-cyan { color: var(--samu-cyan); }
 
 </style>
+@endpush
+
+@push('scripts')
+<script>
+    // Live Clock Script
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('liveClock').textContent = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); // Initial call
+</script>
 @endpush

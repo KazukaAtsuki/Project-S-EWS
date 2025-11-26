@@ -10,6 +10,7 @@ use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PriorityController;
 use App\Http\Controllers\ReceiverNotificationController;
 use App\Http\Controllers\StackController;
+use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\SupportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\Api\TelemetryController;
 
 use Illuminate\Support\Facades\Http;
 
@@ -161,6 +163,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/parameter', [ParameterController::class, 'store'])->name('parameter.store');
         Route::put('/parameter/{id}', [ParameterController::class, 'update'])->name('parameter.update');
         Route::delete('/parameter/{id}', [ParameterController::class, 'destroy'])->name('parameter.destroy');
+
+
+        Route::post('/telemetry', [TelemetryController::class, 'receive']);
 
     });
 
