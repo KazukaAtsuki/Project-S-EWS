@@ -10,7 +10,8 @@ class IndustryController extends Controller
 {
     public function index()
     {
-        return view('master.industry');
+        // PERUBAHAN: Mengarah ke folder 'resources/views/industry/industry.blade.php'
+        return view('industry.industry');
     }
 
     public function getData()
@@ -18,8 +19,9 @@ class IndustryController extends Controller
         $industries = Industry::query();
 
         return DataTables::of($industries)
-            ->addIndexColumn() // <--- TAMBAHKAN BARIS INI (Wajib untuk DT_RowIndex)
+            ->addIndexColumn()
             ->addColumn('action', function ($industry) {
+                // Route tetap menggunakan 'master.industry...' sesuai definisi di web.php
                 return '
                     <div class="d-flex gap-2 justify-content-center">
                         <button class="btn btn-sm btn-warning"

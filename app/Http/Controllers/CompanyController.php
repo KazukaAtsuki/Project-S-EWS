@@ -15,7 +15,9 @@ class CompanyController extends Controller
         $companies = Company::with('industryRelation')->paginate(10);
         $industries = Industry::all();
 
-        return view('master.companies', compact('companies', 'industries'));
+        // PERUBAHAN: Mengarah ke folder 'resources/views/companies/'
+        // Pastikan file blade ada di: resources/views/companies/companies.blade.php
+        return view('companies.companies', compact('companies', 'industries'));
     }
 
     public function store(Request $request)

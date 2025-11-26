@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Priority;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
+use Yajra\DataTables\Facades\DataTables;
 
 class PriorityController extends Controller
 {
     public function index()
     {
-        return view('master.priorities');
+        // PERUBAHAN: Mengarah ke folder 'resources/views/priorities/priorities.blade.php'
+        return view('priorities.priorities');
     }
 
     public function getData()
@@ -20,8 +21,9 @@ class PriorityController extends Controller
         return DataTables::of($priorities)
             ->addIndexColumn()
             ->addColumn('action', function ($priority) {
+                // Route tetap 'master.priorities...' sesuai web.php
                 return '
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 justify-content-center">
                         <button class="btn btn-sm btn-warning"
                             onclick="editPriority(' . $priority->id . ', \'' . addslashes($priority->name) . '\', \'' . addslashes($priority->description) . '\')"
                             title="Edit">
@@ -39,7 +41,6 @@ class PriorityController extends Controller
                 ';
             })
             ->addColumn('name_badge', function ($priority) {
-                // Opsional: Memberikan warna badge berbeda
                 $color = match($priority->name) {
                     'Critical' => 'danger',
                     'High' => 'warning',

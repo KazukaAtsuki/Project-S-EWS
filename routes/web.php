@@ -98,7 +98,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/generate-password', [UserManagementController::class, 'generatePassword'])->name('users.generate-password');
 
         // Levels
-        Route::get('/levels', [LevelController::class, 'levels'])->name('levels');
+        Route::get('/levels', [LevelController::class, 'index'])->name('levels');
         Route::get('/levels/data', [LevelController::class, 'getData'])->name('levels.data');
         Route::get('/levels/create', [LevelController::class, 'create'])->name('levels.create');
         Route::post('/levels', [LevelController::class, 'store'])->name('levels.store');

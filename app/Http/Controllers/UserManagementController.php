@@ -4,17 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserManagementController extends Controller
 {
+    // 1. INDEX: Menampilkan halaman list user
     public function index()
     {
-        return view('master.users');
+        // PERBAIKAN: Folder view berubah dari 'master' ke 'user'
+        return view('user.users');
     }
 
+    // 2. GET DATA: API untuk DataTables
     public function getData()
     {
         $users = User::query();
@@ -22,6 +24,11 @@ class UserManagementController extends Controller
         return DataTables::of($users)
             ->addIndexColumn()
             ->addColumn('action', function ($user) {
+
+                // PERBAIKAN PENTING:
+                // Nama route di web.php adalah 'master.users...', BUKAN 'user.users...'
+                // Meskipun folder view pindah, nama route di web.php tetap 'master.' kecuali Anda mengubahnya juga.
+
                 $editUrl = route('master.users.edit', $user->id);
                 $toggleUrl = route('master.users.toggle', $user->id);
 
@@ -75,12 +82,15 @@ class UserManagementController extends Controller
             ->make(true);
     }
 
+    // 3. CREATE: Menampilkan Form Tambah
     public function create()
     {
         $companies = $this->getCompanies();
-        return view('master.users-create', compact('companies'));
+        // PERBAIKAN: Folder view berubah ke 'user'
+        return view('user.users-create', compact('companies'));
     }
 
+    // 4. STORE: Menyimpan data baru
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -102,16 +112,20 @@ class UserManagementController extends Controller
             'is_active' => true,
         ]);
 
+        // Redirect tetap ke route index master
         return redirect()->route('master.users')->with('success', 'User berhasil ditambahkan!');
     }
 
+    // 5. EDIT: Menampilkan Form Edit
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
         $companies = $this->getCompanies();
-        return view('master.users-edit', compact('user', 'companies'));
+        // PERBAIKAN: Folder view berubah ke 'user'
+        return view('user.users-edit', compact('user', 'companies'));
     }
 
+    // 6. UPDATE: Menyimpan perubahan
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
@@ -142,6 +156,7 @@ class UserManagementController extends Controller
         return redirect()->route('master.users')->with('success', 'User berhasil diupdate!');
     }
 
+    // 7. DESTROY: Hapus user
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
@@ -155,6 +170,7 @@ class UserManagementController extends Controller
         return redirect()->route('master.users')->with('success', 'User berhasil dihapus!');
     }
 
+    // 8. TOGGLE STATUS
     public function toggleStatus(string $id)
     {
         $user = User::findOrFail($id);
@@ -165,9 +181,10 @@ class UserManagementController extends Controller
         return redirect()->back()->with('success', 'Status user berhasil diubah!');
     }
 
+    // 9. GENERATE PASSWORD
     public function generatePassword()
     {
-        $password = Str::random(12);
+        $password = \Illuminate\Support\Str::random(12);
 
         return response()->json([
             'password' => $password

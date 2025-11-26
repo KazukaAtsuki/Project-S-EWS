@@ -13,7 +13,10 @@ class StackController extends Controller
     {
         // Ambil data companies untuk dropdown di Modal
         $companies = Company::all();
-        return view('master.stacks', compact('companies'));
+
+        // PERUBAHAN DISINI:
+        // Mengarah ke folder 'resources/views/stack/stacks.blade.php'
+        return view('stack.stacks', compact('companies'));
     }
 
     public function getData()
@@ -24,12 +27,18 @@ class StackController extends Controller
         return DataTables::of($stacks)
             ->addIndexColumn()
             ->addColumn('action', function ($stack) {
+                // Route tetap 'master.stacks...' sesuai definisi di web.php
+                $deleteUrl = route('master.stacks.destroy', $stack->id);
+
                 return '
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-warning" onclick="editStack(' . $stack->id . ', \'' . addslashes($stack->stack_name) . '\', \'' . addslashes($stack->government_code) . '\', ' . $stack->company_id . ', \'' . $stack->longitude . '\', \'' . $stack->latitude . '\', \'' . $stack->oxygen_reference . '\')" title="Edit">
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button class="btn btn-sm btn-warning"
+                            onclick="editStack(' . $stack->id . ', \'' . addslashes($stack->stack_name) . '\', \'' . addslashes($stack->government_code) . '\', ' . $stack->company_id . ', \'' . $stack->longitude . '\', \'' . $stack->latitude . '\', \'' . $stack->oxygen_reference . '\')"
+                            title="Edit">
                             <i class="bx bx-edit"></i>
                         </button>
-                        <form action="' . route('master.stacks.destroy', $stack->id) . '" method="POST" class="d-inline" onsubmit="return confirm(\'Are you sure you want to delete this stack?\');">
+                        <form action="' . $deleteUrl . '" method="POST" class="d-inline"
+                            onsubmit="return confirm(\'Are you sure you want to delete this stack?\');">
                             ' . csrf_field() . '
                             ' . method_field('DELETE') . '
                             <button type="submit" class="btn btn-sm btn-danger" title="Delete">

@@ -8,9 +8,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class LevelController extends Controller
 {
-    public function levels()
+    // Method Index (Sebelumnya levels)
+    public function index()
     {
-        return view('master.levels');
+        // PERUBAHAN: Mengarah ke folder 'role'
+        // Pastikan file view ada di resources/views/role/levels.blade.php
+        return view('role.levels');
     }
 
     public function getData()
@@ -20,6 +23,7 @@ class LevelController extends Controller
         return DataTables::of($levels)
             ->addIndexColumn()
             ->addColumn('action', function ($level) {
+                // Route tetap 'master.levels...' sesuai web.php
                 $editUrl = route('master.levels.edit', $level->id);
 
                 return '
@@ -48,7 +52,8 @@ class LevelController extends Controller
 
     public function create()
     {
-        return view('master.levels-create');
+        // PERUBAHAN: View create ada di folder 'role'
+        return view('role.levels-create');
     }
 
     public function store(Request $request)
@@ -66,7 +71,8 @@ class LevelController extends Controller
     public function edit(string $id)
     {
         $level = Level::findOrFail($id);
-        return view('master.levels-edit', compact('level'));
+        // PERUBAHAN: View edit ada di folder 'role'
+        return view('role.levels-edit', compact('level'));
     }
 
     public function update(Request $request, string $id)

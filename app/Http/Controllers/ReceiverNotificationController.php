@@ -15,7 +15,9 @@ class ReceiverNotificationController extends Controller
     {
         $companies = Company::all();
         $medias = NotificationMedia::all();
-        return view('master.receiver-notification', compact('companies', 'medias'));
+
+        // PERUBAHAN: Mengarah ke folder 'notification'
+        return view('notification.receiver-notification', compact('companies', 'medias'));
     }
 
     public function getData()
@@ -26,6 +28,7 @@ class ReceiverNotificationController extends Controller
         return DataTables::of($receivers)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
+                // Route tetap 'master.' sesuai web.php
                 return '
                     <div class="d-flex gap-2">
                         <button class="btn btn-sm btn-warning"

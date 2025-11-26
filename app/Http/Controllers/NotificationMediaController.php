@@ -10,7 +10,8 @@ class NotificationMediaController extends Controller
 {
     public function index()
     {
-        return view('master.notification-medias');
+        // PERUBAHAN: Mengarah ke folder 'notification'
+        return view('notification.notification-medias');
     }
 
     public function getData()
@@ -20,6 +21,7 @@ class NotificationMediaController extends Controller
         return DataTables::of($medias)
             ->addIndexColumn()
             ->addColumn('action', function ($media) {
+                // Route tetap 'master.' sesuai web.php
                 return '
                     <div class="d-flex gap-2">
                         <button class="btn btn-sm btn-warning"

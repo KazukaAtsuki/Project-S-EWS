@@ -10,7 +10,9 @@ class ParameterController extends Controller
 {
     public function index()
     {
-        return view('master.parameter');
+        // PERUBAHAN: Mengarah ke folder 'resources/views/parameter/'
+        // Pastikan Anda sudah memindahkan file blade-nya ke folder tersebut.
+        return view('parameter.parameter');
     }
 
     public function getData()
@@ -20,6 +22,7 @@ class ParameterController extends Controller
         return DataTables::of($parameters)
             ->addIndexColumn()
             ->addColumn('action', function ($parameter) {
+                // Route tetap menggunakan 'master.parameter...' sesuai web.php
                 return '
                     <div class="d-flex gap-2">
                         <button class="btn btn-sm btn-warning"

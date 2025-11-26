@@ -10,7 +10,9 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        return view('master.categories');
+        // PERUBAHAN: Mengarah ke folder 'resources/views/categories/'
+        // Pastikan file blade ada di: resources/views/categories/categories.blade.php
+        return view('categories.categories');
     }
 
     public function getData()
@@ -20,6 +22,7 @@ class CategoryController extends Controller
         return DataTables::of($categories)
             ->addIndexColumn()
             ->addColumn('action', function ($category) {
+                // Route tetap 'master.categories...' sesuai web.php
                 return '
                     <div class="d-flex gap-2">
                         <button class="btn btn-sm btn-warning"

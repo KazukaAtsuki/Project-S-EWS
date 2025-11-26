@@ -10,7 +10,7 @@
                 <h5 class="mb-0">Edit User</h5>
             </div>
             <div class="card-body">
-                <form action="{{ route('master.users.update', $user->id) }}" method="POST">
+                <form action="{{ route('user.users.update', $user->id) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -118,7 +118,7 @@
 
                     <div class="row">
                         <div class="col-sm-10 offset-sm-2">
-                            <a href="{{ route('master.users') }}" class="btn btn-secondary">Back</a>
+                            <a href="{{ route('user.users') }}" class="btn btn-secondary">Back</a>
                             <button type="submit" class="btn btn-primary">Update</button>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
 @push('scripts')
 <script>
 document.getElementById('generateBtn').addEventListener('click', function() {
-    fetch('{{ route("master.users.generate-password") }}')
+    fetch('{{ route("user.users.generate-password") }}')
         .then(response => response.json())
         .then(data => {
             document.getElementById('password').value = data.password;
