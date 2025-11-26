@@ -20,6 +20,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\Api\TelemetryController;
+use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Support\Facades\Http;
 
@@ -193,5 +194,17 @@ Route::middleware(['auth'])->group(function () {
 
         return $response->json();
     });
+
+    Route::get('/debug-mail', function () {
+        // Kita TIDAK pakai try-catch. Biarkan error muncul di layar merah Laravel.
+
+        \Illuminate\Support\Facades\Mail::raw('Test Debugging', function ($message) {
+            $message->to('test@example.com')
+                    ->subject('Cek Error');
+        });
+
+        return 'Email Terkirim! Cek Mailtrap.';
+    });
+
 
 });
