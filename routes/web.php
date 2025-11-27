@@ -196,14 +196,25 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('/debug-mail', function () {
-        // Kita TIDAK pakai try-catch. Biarkan error muncul di layar merah Laravel.
 
-        \Illuminate\Support\Facades\Mail::raw('Test Debugging', function ($message) {
-            $message->to('test@example.com')
-                    ->subject('Cek Error');
-        });
+        // Data dummy untuk view
+        $data = ['name' => 'Developer EWS'];
 
-        return 'Email Terkirim! Cek Mailtrap.';
+        // Masukkan email tujuan kamu di sini (biar bisa cek inbox HP)
+        $emailTujuan = 'Redninja1sr@gmail.com';
+
+        try {
+            Mail::send('emails.test-debug', $data, function ($message) use ($emailTujuan) {
+                $message->to($emailTujuan)
+                        ->subject('Tes Koneksi Laravel ke Gmail Berhasil ✅');
+            });
+
+            return "<h1>✅ Sukses!</h1> Email terkirim ke <b>$emailTujuan</b>.<br>Cek Inbox atau Spam folder kamu.";
+
+        } catch (\Exception $e) {
+            // Tampilkan error lengkap jika gagal
+            return "<h1>❌ Gagal Login SMTP!</h1> Pastikan App Password di .env sudah benar.<br><br>Error: " . $e->getMessage();
+        }
     });
 
 

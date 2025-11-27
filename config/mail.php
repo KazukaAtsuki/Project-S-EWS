@@ -39,23 +39,21 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
             'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
+            'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
             'port' => env('MAIL_PORT', 2525),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+            'local_domain' => env('MAIL_EHLO_DOMAIN'),
 
-             // --- TAMBAHAN AGAR KONEKSI LANCAR DI LOCALHOST ---
-            // Ini memaksa Laravel supaya tidak rewel soal SSL Certificate
-            'stream' => [
+            // Ini bagian tambahan untuk bypass SSL error
+            'context' => [
                 'ssl' => [
-                    'allow_self_signed' => true,
                     'verify_peer' => false,
                     'verify_peer_name' => false,
+                    'allow_self_signed' => true,
                 ],
             ],
         ],
