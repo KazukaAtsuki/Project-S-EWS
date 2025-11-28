@@ -1,4 +1,4 @@
-<!-- Navbar Modern SAMU Theme -->
+<!-- Navbar Modern SAMU Theme (Dark Mode Ready) -->
 <nav class="layout-navbar navbar navbar-expand-xl align-items-center bg-navbar-theme w-100 samu-navbar"
      id="layout-navbar">
 
@@ -33,8 +33,8 @@
                     </div>
                 </div>
 
-                <!-- 2. System Status Widget (NEW) -->
-                <div class="d-none d-xl-flex align-items-center samu-widget-box px-3 py-1 rounded-pill bg-light">
+                <!-- 2. System Status Widget -->
+                <div class="d-none d-xl-flex align-items-center samu-widget-box px-3 py-1 rounded-pill">
                     <span class="position-relative d-flex h-2 w-2 me-2">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
 
-                <!-- 3. Date & Live Clock (NEW) -->
+                <!-- 3. Date & Live Clock -->
                 <div class="d-none d-md-flex align-items-center">
                     <div class="samu-divider me-3"></div>
                     <div>
@@ -59,14 +59,23 @@
                 </div>
             </div>
 
-            <!-- RIGHT SIDE: Notification & Profile -->
+            <!-- RIGHT SIDE: Dark Mode, Notification & Profile -->
             <ul class="navbar-nav flex-row align-items-center ms-auto">
+
+                <!-- [NEW] Dark Mode Toggle -->
+                <li class="nav-item me-2">
+                    <a class="nav-link samu-icon-btn" href="javascript:void(0);" id="themeToggle" title="Switch Theme">
+                        <!-- Ikon akan berubah lewat JS -->
+                        <i class="bx bx-moon bx-sm" id="themeIcon"></i>
+                    </a>
+                </li>
+
                 @auth
 
-                <!-- Greeting Text (NEW) -->
+                <!-- Greeting Text -->
                 <li class="nav-item me-3 d-none d-lg-block">
                     <span class="text-muted" style="font-size: 0.85rem;">Hello, </span>
-                    <span class="fw-bold text-dark">{{ explode(' ', auth()->user()->name)[0] }}</span>
+                    <span class="fw-bold text-dark user-name-text">{{ explode(' ', auth()->user()->name)[0] }}</span>
                 </li>
 
                 <!-- Notification -->
@@ -104,8 +113,8 @@
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <span class="fw-bold d-block text-dark">{{ auth()->user()->name }}</span>
-                                        <small class="text-muted">{{ auth()->user()->role }}</small>
+                                        <span class="fw-bold d-block text-dark dropdown-text-main">{{ auth()->user()->name }}</span>
+                                        <small class="text-muted dropdown-text-sub">{{ auth()->user()->role }}</small>
                                     </div>
                                 </div>
                             </a>
@@ -122,16 +131,6 @@
                             <a class="dropdown-item" href="{{ route('accounts.security') }}">
                                 <i class="bx bx-cog me-2 samu-icon-blue"></i>
                                 <span class="align-middle">Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <span class="d-flex align-items-center align-middle">
-                                    <i class="bx bx-building me-2 samu-icon-cyan"></i>
-                                    <span class="flex-grow-1 align-middle text-truncate" style="max-width: 150px;">
-                                        {{ auth()->user()->company }}
-                                    </span>
-                                </span>
                             </a>
                         </li>
 
@@ -162,28 +161,100 @@
     </div>
 </nav>
 
-<!-- CSS Khusus Navbar SAMU -->
+<!-- CSS Khusus Navbar & Dark Mode Logic -->
 @push('styles')
 <style>
+    /* --- 1. ROOT VARIABLES (LIGHT) --- */
     :root {
         --samu-gold: #D4A12A;
         --samu-blue: #1E6BA8;
         --samu-cyan: #2EBAC6;
         --samu-bg-glass: rgba(255, 255, 255, 0.95);
+        --samu-text-main: #2b2c40;
+        --samu-text-muted: #697a8d;
+        --samu-bg-body: #f5f5f9;
+        --samu-bg-card: #ffffff;
+        --samu-border: #d9dee3;
+        --samu-input-bg: #f3f4f6;
     }
 
-    /* 1. Navbar Base */
+    /* --- 2. DARK MODE OVERRIDES --- */
+    [data-theme="dark"] {
+        /* Backgrounds */
+        --bs-body-bg: #0f111a;
+        --samu-bg-body: #0f111a;
+        --samu-bg-card: #1c1f2e;
+        --samu-bg-glass: rgba(28, 31, 46, 0.95);
+
+        /* Text */
+        --samu-text-main: #e4e6eb;
+        --samu-text-muted: #a0a6b1;
+        --bs-heading-color: #e4e6eb;
+        --bs-body-color: #b0b3b8;
+
+        /* Inputs & Borders */
+        --samu-border: #2d324a;
+        --samu-input-bg: #151824;
+    }
+
+    /* Apply Dark Variables to Elements */
+    [data-theme="dark"] body {
+        background-color: var(--samu-bg-body) !important;
+        color: var(--bs-body-color) !important;
+    }
+
+    [data-theme="dark"] .card,
+    [data-theme="dark"] .layout-menu,
+    [data-theme="dark"] .dropdown-menu {
+        background-color: var(--samu-bg-card) !important;
+        border-color: var(--samu-border) !important;
+        color: var(--samu-text-main) !important;
+    }
+
+    [data-theme="dark"] .text-dark,
+    [data-theme="dark"] .fw-bold,
+    [data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3, [data-theme="dark"] h4, [data-theme="dark"] h5, [data-theme="dark"] h6 {
+        color: var(--samu-text-main) !important;
+    }
+
+    [data-theme="dark"] .text-muted {
+        color: var(--samu-text-muted) !important;
+    }
+
+    [data-theme="dark"] .form-control,
+    [data-theme="dark"] .form-select,
+    [data-theme="dark"] .input-group-text,
+    [data-theme="dark"] .samu-search-group {
+        background-color: var(--samu-input-bg) !important;
+        border-color: var(--samu-border) !important;
+        color: var(--samu-text-main) !important;
+    }
+
+    [data-theme="dark"] .bg-white {
+        background-color: var(--samu-bg-card) !important;
+    }
+
+    [data-theme="dark"] .bg-light {
+        background-color: #252a3d !important;
+    }
+
+    [data-theme="dark"] .samu-widget-box {
+        background-color: #252a3d !important;
+        border-color: var(--samu-border) !important;
+    }
+
+    /* --- NAVBAR STYLES --- */
     .samu-navbar {
         backdrop-filter: blur(12px);
         background-color: var(--samu-bg-glass) !important;
         z-index: 1000;
         border-bottom: 1px solid rgba(0,0,0,0.05);
         box-shadow: 0 4px 20px rgba(0,0,0,0.02) !important;
+        transition: background-color 0.3s ease;
     }
 
-    /* 2. Search Bar Modern */
     .samu-search-group {
-        background-color: #f3f4f6;
+        background-color: var(--samu-input-bg);
         border-radius: 12px;
         border: 1px solid transparent;
         transition: all 0.3s ease;
@@ -192,22 +263,20 @@
 
     .samu-search-group:hover,
     .samu-search-group:focus-within {
-        background-color: #ffffff;
         border-color: var(--samu-blue);
         box-shadow: 0 4px 12px rgba(30, 107, 168, 0.1);
     }
 
     .samu-badge-shortcut {
-        background-color: white;
-        color: #888;
-        border: 1px solid #ddd;
+        background-color: var(--samu-bg-card);
+        color: var(--samu-text-muted);
+        border: 1px solid var(--samu-border);
         border-radius: 6px;
         font-size: 0.65rem;
         font-weight: 700;
         padding: 3px 6px;
     }
 
-    /* 3. System Widget */
     .samu-widget-box {
         border: 1px solid #eee;
         background-color: #fafafa;
@@ -229,23 +298,21 @@
         animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
     }
 
-    /* 4. Date & Divider */
     .samu-divider {
         width: 1px;
         height: 35px;
-        background: #e0e0e0;
+        background: var(--samu-border);
     }
 
     .samu-date-text {
-        color: #2b2c40;
+        color: var(--samu-text-main);
         font-weight: 800;
         font-size: 1.1rem;
         line-height: 1;
     }
 
-    /* 5. Icons & Notifications */
     .samu-icon-btn {
-        color: #697a8d;
+        color: var(--samu-text-muted);
         transition: all 0.3s ease;
     }
 
@@ -261,7 +328,10 @@
         right: 5px !important;
     }
 
-    /* 6. Avatar Ring Gradient */
+    [data-theme="dark"] .samu-badge-notif {
+        border-color: var(--samu-bg-card);
+    }
+
     .samu-avatar-initial {
         background: linear-gradient(135deg, var(--samu-blue), var(--samu-cyan));
         color: white;
@@ -280,9 +350,8 @@
         transform: scale(1.05);
     }
 
-    /* 7. Dropdown Menu */
     .samu-dropdown-menu {
-        border: none;
+        border: 1px solid var(--samu-border);
         border-radius: 16px;
         padding: 0.75rem;
         margin-top: 15px !important;
@@ -292,14 +361,19 @@
         border-radius: 10px;
         padding: 10px 15px;
         font-weight: 500;
-        color: #566a7f;
+        color: var(--samu-text-muted);
         margin-bottom: 2px;
     }
 
     .samu-dropdown-menu .dropdown-item:hover {
-        background-color: #f0f7ff;
-        color: var(--samu-blue);
+        background-color: var(--samu-blue);
+        color: white; /* Hover jadi putih biar kontras */
         transform: translateX(3px);
+    }
+
+    /* Fix hover icon color */
+    .samu-dropdown-menu .dropdown-item:hover i {
+        color: white !important;
     }
 
     .samu-icon-gold { color: var(--samu-gold); }
@@ -311,7 +385,7 @@
 
 @push('scripts')
 <script>
-    // Live Clock Script
+    // 1. Live Clock
     function updateClock() {
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, '0');
@@ -319,6 +393,33 @@
         document.getElementById('liveClock').textContent = `${hours}:${minutes}`;
     }
     setInterval(updateClock, 1000);
-    updateClock(); // Initial call
+    updateClock();
+
+    // 2. Dark Mode Logic
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const body = document.body;
+
+    // Cek LocalStorage saat load
+    const savedTheme = localStorage.getItem('samu_theme');
+    if (savedTheme === 'dark') {
+        body.setAttribute('data-theme', 'dark');
+        themeIcon.classList.replace('bx-moon', 'bx-sun'); // Ubah ikon jadi matahari
+    }
+
+    // Handle Klik
+    themeToggle.addEventListener('click', () => {
+        if (body.getAttribute('data-theme') === 'dark') {
+            // Switch to Light
+            body.removeAttribute('data-theme');
+            localStorage.setItem('samu_theme', 'light');
+            themeIcon.classList.replace('bx-sun', 'bx-moon');
+        } else {
+            // Switch to Dark
+            body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('samu_theme', 'dark');
+            themeIcon.classList.replace('bx-moon', 'bx-sun');
+        }
+    });
 </script>
 @endpush

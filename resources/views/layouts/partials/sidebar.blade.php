@@ -1,26 +1,19 @@
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme shadow-sm" style="border-right: 1px solid rgba(0,0,0,0.05);">
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme shadow-sm" style="border-right: 1px solid rgba(0,0,0,0.03);">
 
-    <!-- BRAND / LOGO -->
-    <div class="app-brand demo mb-3" style="height: 80px;">
-        <a href="{{ route('dashboard') }}" class="app-brand-link gap-2">
-            <!-- Logo Icon Modern -->
+    <!-- BRAND LOGO AREA -->
+    <div class="app-brand demo py-3 mb-1" style="height: 90px;">
+        <a href="{{ route('dashboard') }}" class="app-brand-link gap-3">
+            <!-- Modern Icon -->
             <span class="app-brand-logo demo">
-                <div style="
-                    width: 42px;
-                    height: 42px;
-                    background: linear-gradient(135deg, #D4A12A 0%, #1E6BA8 50%, #2EBAC6 100%);
-                    border-radius: 12px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    box-shadow: 0 4px 10px rgba(30, 107, 168, 0.2);">
-                    <i class='bx bx-radar fs-3 text-white'></i>
+                <div class="d-flex align-items-center justify-content-center rounded-3 shadow-sm"
+                     style="width: 45px; height: 45px; background: linear-gradient(135deg, #D4A12A 0%, #1E6BA8 100%);">
+                    <i class='bx bx-radar fs-2 text-white'></i>
                 </div>
             </span>
-            <!-- Logo Text -->
-            <span class="app-brand-text demo menu-text fw-bold ms-1" style="color: #2b2c40; line-height: 1.2;">
-                <span style="font-size: 20px;">SAMU</span>
-                <small class="d-block text-muted" style="font-size: 11px; font-weight: 500; letter-spacing: 0.5px;">EWS PLATFORM</small>
+            <!-- Text Brand -->
+            <span class="app-brand-text demo menu-text fw-bold ms-1 lh-1">
+                <span class="d-block" style="color: #2b2c40; font-size: 22px; letter-spacing: -0.5px;">SAMU</span>
+                <small class="text-muted text-uppercase" style="font-size: 10px; letter-spacing: 1px; font-weight: 600;">EWS Platform</small>
             </span>
         </a>
 
@@ -29,10 +22,13 @@
         </a>
     </div>
 
+    <!-- Gradient Divider -->
+    <div class="mx-3 mb-2" style="height: 2px; background: linear-gradient(90deg, #D4A12A, #1E6BA8, #2EBAC6); opacity: 0.2; border-radius: 10px;"></div>
+
     <div class="menu-inner-shadow"></div>
 
     <!-- MENU LIST -->
-    <ul class="menu-inner py-1">
+    <ul class="menu-inner py-2">
 
         <!-- Dashboard -->
         <li class="menu-item {{ request()->routeIs('dashboard') ? 'active samu-active' : '' }}">
@@ -42,9 +38,9 @@
             </a>
         </li>
 
-        <!-- MONITORING SECTION -->
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text" style="color: #D4A12A; font-weight: 700;">MONITORING</span>
+        <!-- SECTION: MONITORING -->
+        <li class="menu-header small text-uppercase mt-3">
+            <span class="menu-header-text" style="color: #D4A12A; font-weight: 800; letter-spacing: 0.5px;">MONITORING</span>
         </li>
 
         <li class="menu-item {{ request()->routeIs('monitoring.*') ? 'active samu-active' : '' }}">
@@ -54,7 +50,7 @@
             </a>
         </li>
 
-        <!-- SUPPORT SECTION -->
+        <!-- SECTION: SUPPORT -->
         <li class="menu-item {{ request()->routeIs('support.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-support"></i>
@@ -69,9 +65,9 @@
             </ul>
         </li>
 
-        <!-- CONFIGURATION SECTION -->
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text" style="color: #1E6BA8; font-weight: 700;">SETTINGS</span>
+        <!-- SECTION: CONFIGURATION -->
+        <li class="menu-header small text-uppercase mt-3">
+            <span class="menu-header-text" style="color: #1E6BA8; font-weight: 800; letter-spacing: 0.5px;">SETTINGS</span>
         </li>
 
         <li class="menu-item {{ request()->routeIs('settings.*') ? 'active open' : '' }}">
@@ -112,10 +108,10 @@
             </ul>
         </li>
 
-        <!-- MASTER DATA SECTION (PROTECTED) -->
+        <!-- SECTION: MASTER DATA (ADMIN ONLY) -->
         @if(auth()->user()->role === 'Admin')
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text" style="color: #2EBAC6; font-weight: 700;">ADMINISTRATION</span>
+        <li class="menu-header small text-uppercase mt-3">
+            <span class="menu-header-text" style="color: #2EBAC6; font-weight: 800; letter-spacing: 0.5px;">ADMINISTRATION</span>
         </li>
 
         <li class="menu-item {{ request()->routeIs('master.*') ? 'active open' : '' }}">
@@ -128,7 +124,7 @@
                 <!-- Role -->
                 <li class="menu-item {{ request()->routeIs('master.levels') ? 'active' : '' }}">
                     <a href="{{ route('master.levels') }}" class="menu-link">
-                        <i class="bx bx-shield-quarter me-2 text-warning"></i> <!-- Gold -->
+                        <i class="bx bx-shield-quarter me-2 text-warning"></i>
                         <div data-i18n="Role">Role Access</div>
                     </a>
                 </li>
@@ -136,7 +132,7 @@
                 <!-- User -->
                 <li class="menu-item {{ request()->routeIs('master.users') ? 'active' : '' }}">
                     <a href="{{ route('master.users') }}" class="menu-link">
-                        <i class="bx bx-group me-2 text-primary"></i> <!-- Blue -->
+                        <i class="bx bx-group me-2 text-primary"></i>
                         <div data-i18n="Users">Users</div>
                     </a>
                 </li>
@@ -144,7 +140,7 @@
                 <!-- Companies -->
                 <li class="menu-item {{ request()->routeIs('master.companies') ? 'active' : '' }}">
                     <a href="{{ route('master.companies') }}" class="menu-link">
-                        <i class="bx bx-buildings me-2 text-info"></i> <!-- Cyan -->
+                        <i class="bx bx-buildings me-2 text-info"></i>
                         <div data-i18n="Companies">Companies</div>
                     </a>
                 </li>
@@ -206,27 +202,54 @@
     </ul>
 </aside>
 
-<!-- Tambahkan Style ini di Layout Utama atau di sini -->
 <style>
-    /* Custom Active State for SAMU Theme */
+    /* ========================================
+       SAMU SIDEBAR STYLING
+       ======================================== */
+
+    /* Active State: Gradient Background + Border Left */
     .menu-item.samu-active > .menu-link {
-        background: linear-gradient(90deg, rgba(30, 107, 168, 0.1) 0%, rgba(255, 255, 255, 0) 100%) !important;
-        border-left: 4px solid #1E6BA8 !important; /* SAMU Blue */
+        background: linear-gradient(90deg, rgba(30, 107, 168, 0.08) 0%, rgba(255, 255, 255, 0) 100%) !important;
         color: #1E6BA8 !important;
+        border-left: 4px solid #1E6BA8 !important; /* SAMU Blue */
+        font-weight: 600;
     }
 
     .menu-item.samu-active .menu-icon {
         color: #1E6BA8 !important;
     }
 
-    /* Submenu Active */
+    /* Hover State */
+    .menu-item .menu-link:hover {
+        background-color: #f8f9fa !important;
+        color: #1E6BA8 !important;
+    }
+
+    /* Submenu Styling */
     .menu-sub .menu-item.active > .menu-link {
         color: #2b2c40 !important;
         font-weight: 600;
+        background-color: transparent !important;
     }
 
+    /* Custom Bullet for Submenu */
     .menu-sub .menu-item.active > .menu-link::before {
         background-color: #D4A12A !important; /* Gold Bullet */
         box-shadow: 0 0 0 2px rgba(212, 161, 42, 0.2);
+    }
+
+    /* Header Text Color */
+    .menu-header-text {
+        font-size: 0.7rem !important;
+        opacity: 0.9;
+    }
+
+    /* Sidebar Scrollbar */
+    .layout-menu::-webkit-scrollbar {
+        width: 5px;
+    }
+    .layout-menu::-webkit-scrollbar-thumb {
+        background: #e0e0e0;
+        border-radius: 10px;
     }
 </style>

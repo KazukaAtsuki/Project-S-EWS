@@ -22,6 +22,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\Api\TelemetryController;
 use Illuminate\Support\Facades\Mail;
 
+
 use Illuminate\Support\Facades\Http;
 
 
@@ -217,5 +218,30 @@ Route::middleware(['auth'])->group(function () {
         }
     });
 
+    // --- ROUTE SIMULASI BAHAYA (Testing EWS) ---
+Route::get('/simulasi-bahaya', function () {
+    // Simulasi Data Bahaya (Nilai 150 > Threshold 100)
+    $request = new \Illuminate\Http\Request();
+    $request->replace([
+        'stack_code' => 'ST-01',
+        'parameter_code' => 'CO',
+        'value' => 150
+    ]);
+
+    // Panggil Controller EWS
+    return app(TelemetryController::class)->receive($request);
+});
+
+// Simulasi OVERRANGE (Nilai 250 > 2x Lipat Threshold 100)
+Route::get('/simulasi-overrange', function () {
+    $request = new \Illuminate\Http\Request();
+    $request->replace([
+        'stack_code' => 'ST-01',
+        'parameter_code' => 'CO',
+        'value' => 250 // Nilai Sangat Tinggi
+    ]);
+
+    return app(\App\Http\Controllers\Api\TelemetryController::class)->receive($request);
+});
 
 });
