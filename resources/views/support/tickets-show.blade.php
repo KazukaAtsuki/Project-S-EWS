@@ -40,9 +40,11 @@
 </div>
 
 <div class="row">
+
     <!-- LEFT COLUMN: Main Content (Subject, Description, Attachment) -->
     <div class="col-lg-8 mb-4">
         <div class="card border-0 shadow-sm rounded-4 h-100">
+
             <!-- Ticket Header -->
             <div class="card-header bg-white border-bottom p-4">
                 <div class="d-flex align-items-start gap-3">
@@ -53,7 +55,7 @@
                         <span class="badge bg-label-secondary mb-2">#{{ $ticket->id }}</span>
                         <h5 class="mb-1 fw-bold text-dark lh-base">{{ $ticket->subject }}</h5>
                         <small class="text-muted">
-                            Created {{ $ticket->created_at->format('d F Y, H:i') }} 
+                            Created {{ $ticket->created_at->format('d F Y, H:i') }}
                             ({{ $ticket->created_at->diffForHumans() }})
                         </small>
                     </div>
@@ -63,51 +65,71 @@
             <div class="card-body p-4">
                 <!-- Description Box -->
                 <h6 class="fw-bold text-uppercase text-muted small mb-3">Issue Description</h6>
-                <div class="samu-description-box">
+                <div class="samu-description-box mb-4">
                     {{ $ticket->description }}
                 </div>
 
-                <!-- Attachment Section -->
-                @if($ticket->attachment)
-                <div class="mt-4">
-                    <h6 class="fw-bold text-uppercase text-muted small mb-3">Attachment</h6>
-                    <div class="card border border-dashed bg-light rounded-3">
-                        <div class="card-body d-flex align-items-center p-3">
-                            <div class="avatar avatar-md me-3">
-                                <span class="avatar-initial rounded bg-white text-primary shadow-sm">
-                                    <i class="bx bx-file fs-4"></i>
-                                </span>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0 fw-semibold">Attached Document</h6>
-                                <small class="text-muted">Click download to view file</small>
-                            </div>
-                            <a href="{{ asset('storage/' . $ticket->attachment) }}" target="_blank" class="btn samu-btn-primary btn-sm px-3">
-                                <i class="bx bx-download me-1"></i> Download
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                @else
+                <!-- Attachments Section (Moved Here) -->
                 <div class="mt-4 pt-3 border-top">
-                    <small class="text-muted fst-italic"><i class="bx bx-info-circle me-1"></i>No files attached to this ticket.</small>
+                    <h6 class="fw-bold text-uppercase text-muted small mb-3">Attachments</h6>
+
+                    @if($ticket->attachments && $ticket->attachments->count() > 0)
+                        <div class="row g-3">
+                            @foreach($ticket->attachments as $file)
+                                <div class="col-md-6">
+                                    <div class="card border border-dashed bg-light rounded-3 h-100">
+                                        <div class="card-body d-flex align-items-center p-3">
+                                            <div class="avatar avatar-md me-3">
+                                                <span class="avatar-initial rounded bg-white text-primary shadow-sm">
+                                                    @php
+                                                        $ext = pathinfo($file->file_name, PATHINFO_EXTENSION);
+                                                        $icon = match(strtolower($ext)) {
+                                                            'pdf' => 'bxs-file-pdf text-danger',
+                                                            'doc', 'docx' => 'bxs-file-doc text-primary',
+                                                            'jpg', 'jpeg', 'png' => 'bxs-image text-success',
+                                                            default => 'bx-file'
+                                                        };
+                                                    @endphp
+                                                    <i class='bx {{ $icon }} fs-4'></i>
+                                                </span>
+                                            </div>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <h6 class="mb-0 fw-semibold text-truncate" title="{{ $file->file_name }}">
+                                                    {{ $file->file_name }}
+                                                </h6>
+                                                <small class="text-muted">{{ strtoupper($ext) }} File</small>
+                                            </div>
+                                            <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="btn samu-btn-primary btn-sm px-3 ms-2">
+                                                <i class="bx bx-download"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="alert alert-light d-flex align-items-center border-0 bg-light text-muted" role="alert">
+                            <i class="bx bx-info-circle me-2 fs-5"></i>
+                            <div>No files attached to this ticket.</div>
+                        </div>
+                    @endif
                 </div>
-                @endif
             </div>
         </div>
     </div>
+    <!-- END LEFT COLUMN -->
 
     <!-- RIGHT COLUMN: Sidebar (Meta Data) -->
     <div class="col-lg-4">
-        
+
         <!-- 1. Status Card -->
         <div class="card border-0 shadow-sm rounded-4 mb-4">
             <div class="card-body p-4">
                 <h6 class="fw-bold text-uppercase text-muted small mb-3">Current Status</h6>
-                
+
                 @php
                     $statusClass = match($ticket->status) {
-                        'Open' => 'success', // Green for Open (Active)
+                        'Open' => 'success',
                         'In Progress' => 'warning',
                         'Closed' => 'secondary',
                         default => 'primary'
@@ -120,12 +142,9 @@
                     };
                 @endphp
 
-                <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-{{ $statusClass }}-subtle border border-{{ $statusClass }}-subtle">
-                    <div class="d-flex align-items-center">
-                        <i class='bx {{ $statusIcon }} fs-4 me-2 text-{{ $statusClass }}'></i>
-                        <span class="fw-bold text-{{ $statusClass }}">{{ $ticket->status }}</span>
-                    </div>
-                    <!-- Placeholder for update status button if needed later -->
+                <div class="d-flex align-items-center p-3 rounded-3 bg-{{ $statusClass }}-subtle border border-{{ $statusClass }}-subtle">
+                    <i class='bx {{ $statusIcon }} fs-4 me-2 text-{{ $statusClass }}'></i>
+                    <span class="fw-bold text-{{ $statusClass }}">{{ $ticket->status }}</span>
                 </div>
             </div>
         </div>
@@ -151,7 +170,7 @@
                         @endphp
                         <span class="badge bg-label-{{ $prioColor }}">{{ $ticket->priority->name }}</span>
                     </li>
-                    
+
                     <!-- Stack -->
                     <li class="list-group-item px-4 py-3">
                         <span class="text-muted small d-block mb-1">Stack Location</span>
@@ -184,7 +203,7 @@
                 </div>
                 <h6 class="fw-bold mb-1">{{ $ticket->user->name }}</h6>
                 <p class="text-muted small mb-3">{{ $ticket->user->email }}</p>
-                
+
                 <a href="mailto:{{ $ticket->user->email }}" class="btn btn-outline-primary btn-sm rounded-pill w-100">
                     <i class="bx bx-envelope me-1"></i> Contact Issuer
                 </a>
@@ -192,6 +211,8 @@
         </div>
 
     </div>
+    <!-- END RIGHT COLUMN -->
+
 </div>
 @endsection
 
@@ -224,7 +245,7 @@
         color: #4a5568;
         line-height: 1.6;
         font-size: 0.95rem;
-        white-space: pre-line; /* Agar enter/paragraf terbaca */
+        white-space: pre-line;
     }
 
     .samu-btn-primary {
@@ -244,7 +265,7 @@
     /* Background Subtles */
     .bg-success-subtle { background-color: #e8fadf !important; border-color: #c9ebbc !important; }
     .text-success { color: #28a745 !important; }
-    
+
     .bg-warning-subtle { background-color: #fff2d6 !important; border-color: #ffe0b5 !important; }
     .text-warning { color: #ffab00 !important; }
 

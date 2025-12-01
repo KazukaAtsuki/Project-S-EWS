@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\TicketAttachment;
 use App\Models\Stack;
 use App\Models\Priority;
 use App\Models\Category;
@@ -101,26 +102,44 @@ class TicketController extends Controller
     // Simpan Ticket Baru
     public function store(Request $request)
     {
+        // 1. VALIDASI
         $validated = $request->validate([
             'stack_id' => 'required|exists:stacks,id',
             'priority_id' => 'required|exists:priorities,id',
             'category_id' => 'required|exists:categories,id',
             'subject' => 'required|string|max:255',
             'description' => 'required|string',
-            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+
+            // PERBAIKAN DISINI: Gunakan 'attachments' (jamak)
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
         ]);
 
-        $data = $validated;
-        $data['user_id'] = Auth::id(); // Ambil ID user yang login
+        // 2. SIMPAN TIKET UTAMA
+        // Kita buang key 'attachments' dari array karena tidak ada kolom itu di tabel tickets
+        $data = collect($validated)->except(['attachments'])->toArray();
+
+        $data['user_id'] = Auth::id();
         $data['status'] = 'Open';
 
-        // Handle File Upload
-        if ($request->hasFile('attachment')) {
-            $path = $request->file('attachment')->store('ticket-attachments', 'public');
-            $data['attachment'] = $path;
-        }
+        // Create Ticket
+        $ticket = Ticket::create($data);
 
-        Ticket::create($data);
+        // 3. SIMPAN MULTIPLE FILES
+        // PERBAIKAN DISINI: Cek 'attachments' (jamak)
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                // Upload file
+                $path = $file->store('ticket-attachments', 'public');
+
+                // Simpan ke tabel relasi
+                TicketAttachment::create([
+                    'ticket_id' => $ticket->id,
+                    'file_path' => $path,
+                    'file_name' => $file->getClientOriginalName(),
+                ]);
+            }
+        }
 
         return redirect()->route('support.tickets')->with('success', 'Ticket created successfully!');
     }
@@ -137,8 +156,11 @@ class TicketController extends Controller
     }
 
     public function show($id)
-{
-    $ticket = Ticket::with(['user', 'stack.companyRelation', 'priority', 'category'])->findOrFail($id);
-    return view('support.tickets-show', compact('ticket'));
-}
+    {
+        // Tambahkan 'attachments' di dalam with()
+        $ticket = Ticket::with(['user', 'stack.companyRelation', 'priority', 'category', 'attachments'])
+                    ->findOrFail($id);
+
+        return view('support.tickets-show', compact('ticket'));
+    }
 }

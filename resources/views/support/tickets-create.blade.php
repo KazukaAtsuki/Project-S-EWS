@@ -24,12 +24,10 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Issuer</label>
-                            <!-- Readonly: Diambil dari Auth User -->
                             <input type="text" class="form-control bg-light" value="{{ $user->name }}" readonly>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Email</label>
-                            <!-- Readonly: Diambil dari Auth User -->
                             <input type="text" class="form-control bg-light" value="{{ $user->email }}" readonly>
                         </div>
                     </div>
@@ -80,13 +78,28 @@
                         <textarea class="form-control" name="description" rows="5" placeholder="Write detailed description here..." required></textarea>
                     </div>
 
+                    <!-- MULTIPLE ATTACHMENTS SECTION -->
                     <div class="mb-4">
-                        <label class="form-label">Attachment</label>
-                        <input class="form-control" type="file" name="attachment">
-                        <div class="form-text">Allowed files: jpg, png, pdf, doc. Max: 2MB.</div>
+                        <label class="form-label fw-bold">Attachments</label>
+                        <div id="attachment-container">
+                            <!-- Input Awal -->
+                            <div class="input-group mb-2">
+                                <input type="file" class="form-control" name="attachments[]">
+                                <button type="button" class="btn btn-outline-danger remove-file" disabled>
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="form-text">Allowed: jpg, png, pdf, doc. Max: 2MB/file.</div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="add-file-btn">
+                                <i class="bx bx-plus me-1"></i> Add More File
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end pt-3 border-top">
                         <a href="{{ route('support.tickets') }}" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Create Ticket</button>
                     </div>
@@ -96,3 +109,39 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('attachment-container');
+        const addBtn = document.getElementById('add-file-btn');
+
+        // Add New File Input
+        addBtn.addEventListener('click', function() {
+            const div = document.createElement('div');
+            div.className = 'input-group mb-2';
+            div.innerHTML = `
+                <input type="file" class="form-control" name="attachments[]">
+                <button type="button" class="btn btn-outline-danger remove-file">
+                    <i class="bx bx-trash"></i>
+                </button>
+            `;
+            container.appendChild(div);
+        });
+
+        // Remove File Input
+        container.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-file')) {
+                const btn = e.target.closest('.remove-file');
+                // Jangan hapus input pertama (biar form tidak kosong total)
+                if (container.children.length > 1) {
+                    btn.parentElement.remove();
+                } else {
+                    // Jika cuma satu, reset value-nya saja
+                    btn.previousElementSibling.value = '';
+                }
+            }
+        });
+    });
+</script>
+@endpush

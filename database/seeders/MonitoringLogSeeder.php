@@ -22,7 +22,7 @@ class MonitoringLogSeeder extends Seeder
         }
 
         // Kita buat 500 data log simulasi
-        for ($i = 0; $i < 500; $i++) {
+        for ($i = 0; $i < 100; $i++) {
 
             $randomStack = $stacks->random();
             $randomParam = $parameters->random();

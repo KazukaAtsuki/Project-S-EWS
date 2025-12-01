@@ -26,6 +26,11 @@ class Ticket extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function attachments()
+    {
+        return $this->hasMany(TicketAttachment::class);
+    }
+
     public function stack()
     {
         return $this->belongsTo(Stack::class);

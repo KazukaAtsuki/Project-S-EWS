@@ -177,8 +177,7 @@
         @foreach($companies as $company)
         <div class="col-md-6 col-xl-4">
             <div class="card border-0 samu-company-card h-100">
-                <!-- Top Gradient Bar -->
-                <div class="samu-card-top-bar"></div>
+
 
                 <div class="card-body p-4">
                     <!-- Header -->
@@ -459,11 +458,6 @@
         border-color: var(--samu-cyan);
         box-shadow: 0 12px 40px rgba(46, 186, 198, 0.2);
         transform: translateY(-8px);
-    }
-
-    .samu-card-top-bar {
-        height: 6px;
-        background: linear-gradient(90deg, var(--samu-gold) 0%, var(--samu-blue) 50%, var(--samu-cyan) 100%);
     }
 
     .samu-company-title {

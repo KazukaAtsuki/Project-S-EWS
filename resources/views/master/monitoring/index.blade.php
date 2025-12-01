@@ -178,48 +178,37 @@
         --samu-cyan-soft: #E6F9FB;
         --samu-dark: #1a1d2e;
         --samu-gray: #6c757d;
-        --samu-shadow: rgba(30, 107, 168, 0.12);
     }
+
+    /* ... (CSS Header & Card lainnya biarkan saja) ... */
 
     /* ========================================
-       PAGE HEADER
+       TABLE HEADER STYLING (DIPERBAIKI)
        ======================================== */
-    .samu-page-header {
-        border-radius: 1.25rem !important;
-        border-left: 5px solid var(--samu-gold);
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    }
-
-    .samu-icon-header {
-        width: 60px;
-        height: 60px;
-        border-radius: 1rem;
+    .samu-table thead {
         background: linear-gradient(135deg, var(--samu-blue) 0%, var(--samu-cyan) 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.75rem;
-        box-shadow: 0 4px 15px rgba(30, 107, 168, 0.2);
     }
 
-    .samu-btn-export {
-        background: linear-gradient(135deg, var(--samu-gold) 0%, var(--samu-gold-light) 100%);
+    .samu-table thead th {
+        color: #ffffff !important; /* UBAH JADI PUTIH TEBAL */
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem; /* Sedikit diperbesar */
+        letter-spacing: 0.5px;
+        padding: 1rem 0.75rem;
         border: none;
-        color: white;
-        font-weight: 600;
-        padding: 0.65rem 1.5rem;
-        border-radius: 50px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(212, 161, 42, 0.25);
+        vertical-align: middle;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1); /* Tambah shadow biar makin jelas */
     }
 
-    .samu-btn-export:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(212, 161, 42, 0.35);
-        color: white;
+    .samu-table thead th:first-child {
+        border-top-left-radius: 0.75rem;
     }
 
+    .samu-table thead th:last-child {
+        border-top-right-radius: 0.75rem;
+    }
+    
     /* ========================================
        FILTER CARD
        ======================================== */

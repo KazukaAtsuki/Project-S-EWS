@@ -10,8 +10,6 @@ class ParameterController extends Controller
 {
     public function index()
     {
-        // PERUBAHAN: Mengarah ke folder 'resources/views/parameter/'
-        // Pastikan Anda sudah memindahkan file blade-nya ke folder tersebut.
         return view('parameter.parameter');
     }
 
@@ -22,9 +20,8 @@ class ParameterController extends Controller
         return DataTables::of($parameters)
             ->addIndexColumn()
             ->addColumn('action', function ($parameter) {
-                // Route tetap menggunakan 'master.parameter...' sesuai web.php
                 return '
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 justify-content-center">
                         <button class="btn btn-sm btn-warning"
                             onclick="editParameter(' . $parameter->id . ', \'' . addslashes($parameter->name) . '\', \'' . addslashes($parameter->unit) . '\', ' . $parameter->max_threshold . ', \'' . addslashes($parameter->description) . '\')"
                             title="Edit">
@@ -41,13 +38,13 @@ class ParameterController extends Controller
                     </div>
                 ';
             })
-            ->editColumn('max_threshold', function ($row) {
-                return '<span class="badge bg-label-danger">Max: ' . $row->max_threshold . '</span>';
-            })
-            ->rawColumns(['action', 'max_threshold'])
+            // HAPUS editColumn 'max_threshold' disini agar data yang dikirim murni angka
+            // Styling akan kita handle di View (Blade/JS)
+            ->rawColumns(['action'])
             ->make(true);
     }
 
+    // ... (function store, update, destroy biarkan tetap sama) ...
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -56,25 +53,20 @@ class ParameterController extends Controller
             'max_threshold' => 'required|numeric',
             'description' => 'nullable|string',
         ]);
-
         Parameter::create($validated);
-
         return redirect()->route('master.parameter')->with('success', 'Parameter created successfully.');
     }
 
     public function update(Request $request, $id)
     {
         $parameter = Parameter::findOrFail($id);
-
         $validated = $request->validate([
             'name' => 'required|string|max:50|unique:parameters,name,' . $id,
             'unit' => 'required|string|max:20',
             'max_threshold' => 'required|numeric',
             'description' => 'nullable|string',
         ]);
-
         $parameter->update($validated);
-
         return redirect()->route('master.parameter')->with('success', 'Parameter updated successfully.');
     }
 
@@ -82,7 +74,6 @@ class ParameterController extends Controller
     {
         $parameter = Parameter::findOrFail($id);
         $parameter->delete();
-
         return redirect()->route('master.parameter')->with('success', 'Parameter deleted successfully.');
     }
 }

@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
+
             // Relasi ke User (Issuer)
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
 
@@ -22,10 +23,14 @@ return new class extends Migration
             // Relasi ke Category (Problem Category)
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
 
+            // Data Tiket Utama
             $table->string('subject');
             $table->text('description');
-            $table->string('attachment')->nullable(); // Path file
             $table->string('status')->default('Open'); // Open, In Progress, Closed
+
+            // HAPUS BAGIAN INI (file_path, file_name, attachment)
+            // Karena file sekarang disimpan di tabel 'ticket_attachments'
+
             $table->timestamps();
         });
     }

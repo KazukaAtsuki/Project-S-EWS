@@ -1,19 +1,26 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme shadow-sm" style="border-right: 1px solid rgba(0,0,0,0.03);">
 
     <!-- BRAND LOGO AREA -->
-    <div class="app-brand demo py-3 mb-1" style="height: 90px;">
+    <div class="app-brand demo py-4 mb-2" style="height: 90px;">
         <a href="{{ route('dashboard') }}" class="app-brand-link gap-3">
-            <!-- Modern Icon -->
+            <!-- Logo Icon Modern -->
             <span class="app-brand-logo demo">
-                <div class="d-flex align-items-center justify-content-center rounded-3 shadow-sm"
-                     style="width: 45px; height: 45px; background: linear-gradient(135deg, #D4A12A 0%, #1E6BA8 100%);">
+                <div style="
+                    width: 45px;
+                    height: 45px;
+                    background: linear-gradient(135deg, #D4A12A 0%, #1E6BA8 50%, #2EBAC6 100%);
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 10px rgba(30, 107, 168, 0.2);">
                     <i class='bx bx-radar fs-2 text-white'></i>
                 </div>
             </span>
             <!-- Text Brand -->
             <span class="app-brand-text demo menu-text fw-bold ms-1 lh-1">
                 <span class="d-block" style="color: #2b2c40; font-size: 22px; letter-spacing: -0.5px;">SAMU</span>
-                <small class="text-muted text-uppercase" style="font-size: 10px; letter-spacing: 1px; font-weight: 600;">EWS Platform</small>
+                <small class="text-muted text-uppercase" style="font-size: 10px; letter-spacing: 1px; font-weight: 600;">EWS PLATFORM</small>
             </span>
         </a>
 
@@ -50,18 +57,35 @@
             </a>
         </li>
 
-        <!-- SECTION: SUPPORT -->
-        <li class="menu-item {{ request()->routeIs('support.*') ? 'active open' : '' }}">
+        <!-- SECTION: SUPPORT (HELP CENTER) -->
+        <li class="menu-item {{ request()->routeIs('support.*') || request()->routeIs('master.priorities') || request()->routeIs('master.categories') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-support"></i>
                 <div data-i18n="Support">Help Center</div>
             </a>
             <ul class="menu-sub">
+                <!-- Tickets -->
                 <li class="menu-item {{ request()->routeIs('support.tickets') ? 'active' : '' }}">
                     <a href="{{ route('support.tickets') }}" class="menu-link">
                         <div data-i18n="Tickets">Support Tickets</div>
                     </a>
                 </li>
+
+                <!-- Priorities (Admin Only) -->
+                @if(auth()->user()->role === 'Admin')
+                <li class="menu-item {{ request()->routeIs('master.priorities') ? 'active' : '' }}">
+                    <a href="{{ route('master.priorities') }}" class="menu-link">
+                        <div data-i18n="Priorities">Ticket Priorities</div>
+                    </a>
+                </li>
+
+                <!-- Categories (Admin Only) -->
+                <li class="menu-item {{ request()->routeIs('master.categories') ? 'active' : '' }}">
+                    <a href="{{ route('master.categories') }}" class="menu-link">
+                        <div data-i18n="Categories">Ticket Categories</div>
+                    </a>
+                </li>
+                @endif
             </ul>
         </li>
 
@@ -114,7 +138,7 @@
             <span class="menu-header-text" style="color: #2EBAC6; font-weight: 800; letter-spacing: 0.5px;">ADMINISTRATION</span>
         </li>
 
-        <li class="menu-item {{ request()->routeIs('master.*') ? 'active open' : '' }}">
+        <li class="menu-item {{ request()->routeIs('master.*') && !request()->routeIs('master.priorities') && !request()->routeIs('master.categories') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-data"></i>
                 <div data-i18n="Master Data">Master Data</div>
@@ -124,7 +148,7 @@
                 <!-- Role -->
                 <li class="menu-item {{ request()->routeIs('master.levels') ? 'active' : '' }}">
                     <a href="{{ route('master.levels') }}" class="menu-link">
-                        <i class="bx bx-shield-quarter me-2 text-warning"></i>
+                        <i class="bx bx-shield-quarter me-2 text-warning"></i> <!-- Gold -->
                         <div data-i18n="Role">Role Access</div>
                     </a>
                 </li>
@@ -132,17 +156,29 @@
                 <!-- User -->
                 <li class="menu-item {{ request()->routeIs('master.users') ? 'active' : '' }}">
                     <a href="{{ route('master.users') }}" class="menu-link">
-                        <i class="bx bx-group me-2 text-primary"></i>
+                        <i class="bx bx-group me-2 text-primary"></i> <!-- Blue -->
                         <div data-i18n="Users">Users</div>
                     </a>
                 </li>
 
-                <!-- Companies -->
-                <li class="menu-item {{ request()->routeIs('master.companies') ? 'active' : '' }}">
-                    <a href="{{ route('master.companies') }}" class="menu-link">
-                        <i class="bx bx-buildings me-2 text-info"></i>
+                <!-- COMPANIES & INDUSTRY (GABUNGAN BARU) -->
+                <li class="menu-item {{ request()->routeIs('master.companies') || request()->routeIs('master.industry') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <i class="bx bx-buildings me-2 text-info"></i> <!-- Cyan -->
                         <div data-i18n="Companies">Companies</div>
                     </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ request()->routeIs('master.companies') ? 'active' : '' }}">
+                            <a href="{{ route('master.companies') }}" class="menu-link">
+                                <div data-i18n="List">Company List</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('master.industry') ? 'active' : '' }}">
+                            <a href="{{ route('master.industry') }}" class="menu-link">
+                                <div data-i18n="Industry">Industry Sector</div>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <!-- Stacks -->
@@ -159,25 +195,6 @@
                         <i class="bx bx-tachometer me-2 text-danger"></i>
                         <div data-i18n="Parameter">Parameter</div>
                     </a>
-                </li>
-
-                <!-- Other Masters Group -->
-                <li class="menu-item">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <i class="bx bx-list-ul me-2"></i>
-                        <div data-i18n="Others">Others</div>
-                    </a>
-                    <ul class="menu-sub">
-                        <li class="menu-item {{ request()->routeIs('master.industry') ? 'active' : '' }}">
-                            <a href="{{ route('master.industry') }}" class="menu-link">Industry</a>
-                        </li>
-                        <li class="menu-item {{ request()->routeIs('master.priorities') ? 'active' : '' }}">
-                            <a href="{{ route('master.priorities') }}" class="menu-link">Priorities</a>
-                        </li>
-                        <li class="menu-item {{ request()->routeIs('master.categories') ? 'active' : '' }}">
-                            <a href="{{ route('master.categories') }}" class="menu-link">Categories</a>
-                        </li>
-                    </ul>
                 </li>
 
                 <!-- Notification Config -->
