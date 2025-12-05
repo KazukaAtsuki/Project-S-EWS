@@ -150,9 +150,19 @@
                 </div>
             </div>
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <button type="button" class="btn samu-btn-primary" id="filterBtn">
+                <!-- Tombol Filter dengan Indikator -->
+                <button type="button" class="btn samu-btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
                     <i class="bx bx-filter-alt me-2"></i> Filter View
+                    @if(request('search') || request('industry_id'))
+                        <span class="badge bg-white text-primary ms-2 rounded-pill">Active</span>
+                    @endif
                 </button>
+
+                @if(request('search') || request('industry_id'))
+                    <a href="{{ route('dashboard') }}" class="btn btn-light text-danger ms-2" title="Reset Filter">
+                        <i class='bx bx-x fs-5'></i>
+                    </a>
+                @endif
             </div>
         </div>
     </div>
@@ -166,10 +176,12 @@
                 <i class='bx bx-data fs-1'></i>
             </div>
             <h3 class="fw-bold mb-3">No Data Available</h3>
-            <p class="text-muted mb-4">Belum ada perusahaan yang terdaftar di sistem EWS SAMU.</p>
+            <p class="text-muted mb-4">Tidak ada data perusahaan yang sesuai dengan filter atau database kosong.</p>
+            @if(auth()->user()->role === 'Admin')
             <a href="{{ route('master.companies') }}" class="btn samu-btn-primary btn-lg px-5">
                 <i class="bx bx-plus-circle me-2"></i> Add New Company
             </a>
+            @endif
         </div>
     </div>
 @else
@@ -177,10 +189,11 @@
         @foreach($companies as $company)
         <div class="col-md-6 col-xl-4">
             <div class="card border-0 samu-company-card h-100">
-
+                <!-- Top Gradient Bar (Aksen Warna) -->
+                <div class="samu-card-top-bar"></div>
 
                 <div class="card-body p-4">
-                    <!-- Header -->
+                    <!-- Header: Code & Industry -->
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <span class="badge samu-badge-primary px-3 py-2">
                             <i class="bx bx-hash me-1"></i>{{ $company->company_code }}
@@ -191,14 +204,14 @@
                     </div>
 
                     <!-- Company Name -->
-                    <h5 class="fw-bold mb-2 samu-company-title" title="{{ $company->name }}">
+                    <h5 class="fw-bold mb-2 samu-company-title text-truncate" title="{{ $company->name }}">
                         {{ $company->name }}
                     </h5>
 
                     <!-- Contact Info -->
                     <div class="d-flex align-items-center text-muted mb-4 flex-wrap" style="font-size: 0.9rem;">
                         <i class="bx bx-user me-1"></i>
-                        <span class="me-2">{{ $company->contact_person }}</span>
+                        <span class="me-2">{{ Str::limit($company->contact_person, 15) }}</span>
                         @if($company->contact_phone)
                             <span class="mx-2">•</span>
                             <i class="bx bx-phone me-1"></i>
@@ -206,26 +219,28 @@
                         @endif
                     </div>
 
-                    <!-- Monitoring Status -->
+                    <!-- Monitoring Status Grid -->
                     <div class="row g-3">
+                        <!-- Box 1: Monitoring -->
                         <div class="col-6">
-                            <div class="samu-status-box samu-box-warning">
+                            <div class="samu-status-box samu-box-warning h-100">
                                 <div class="d-flex align-items-center mb-2">
                                     <i class='bx bx-radar fs-5 me-2'></i>
-                                    <small class="fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Parameter</small>
+                                    <small class="fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">Parameter</small>
                                 </div>
-                                <h6 class="fw-bold mb-1">Monitoring</h6>
-                                <small class="text-muted">Active Sensors</small>
+                                <h6 class="fw-bold mb-1">Active</h6>
+                                <small class="opacity-75" style="font-size: 0.75rem;">Sensors Online</small>
                             </div>
                         </div>
+                        <!-- Box 2: Status -->
                         <div class="col-6">
-                            <div class="samu-status-box samu-box-success">
+                            <div class="samu-status-box samu-box-success h-100">
                                 <div class="d-flex align-items-center mb-2">
                                     <i class='bx bx-check-circle fs-5 me-2'></i>
-                                    <small class="fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Status</small>
+                                    <small class="fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">Status</small>
                                 </div>
                                 <h6 class="fw-bold mb-1">Safe</h6>
-                                <small class="text-muted">No Issues</small>
+                                <small class="opacity-75" style="font-size: 0.75rem;">No Issues</small>
                             </div>
                         </div>
                     </div>
@@ -237,9 +252,15 @@
                         <small class="text-muted">
                             <i class='bx bx-time-five me-1'></i> {{ $company->updated_at->diffForHumans() }}
                         </small>
-                        <a href="{{ route('master.companies') }}" class="btn btn-sm samu-btn-primary-sm">
-                            Details <i class='bx bx-chevron-right ms-1'></i>
-                        </a>
+
+                        <!-- Cek Role sebelum menampilkan tombol Edit/Master -->
+                        @if(auth()->user()->role === 'Admin')
+                            <a href="{{ route('master.companies') }}" class="btn btn-sm samu-btn-primary-sm">
+                                Manage <i class='bx bx-chevron-right ms-1'></i>
+                            </a>
+                        @else
+                            <span class="badge bg-label-secondary">View Only</span>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -247,6 +268,52 @@
         @endforeach
     </div>
 @endif
+
+<!-- Filter Modal (Tetap Sama tapi dirapikan) -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 1.5rem;">
+            <div class="modal-header border-bottom p-4">
+                <h5 class="modal-title fw-bold text-primary">
+                    <i class="bx bx-filter me-2"></i>Filter Dashboard
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('dashboard') }}" method="GET">
+                <div class="modal-body p-4">
+                    <!-- Search Name -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark">Search Company</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bx bx-search text-muted"></i></span>
+                            <input type="text" class="form-control samu-input border-start-0 ps-0"
+                                   name="search"
+                                   value="{{ request('search') }}"
+                                   placeholder="Company Name or Code...">
+                        </div>
+                    </div>
+
+                    <!-- Select Industry -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark">Filter by Industry</label>
+                        <select class="form-select samu-select" name="industry_id">
+                            <option value="">-- All Industries --</option>
+                            @foreach($industries as $industry)
+                                <option value="{{ $industry->id }}" {{ request('industry_id') == $industry->id ? 'selected' : '' }}>
+                                    {{ $industry->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-top p-3 bg-light" style="border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem;">
+                    <a href="{{ route('dashboard') }}" class="btn btn-light fw-bold text-muted">Reset</a>
+                    <button type="submit" class="btn samu-btn-primary px-4">Apply Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @endsection
 
@@ -545,14 +612,6 @@
 
 @push('scripts')
 <script>
-    document.getElementById('filterBtn')?.addEventListener('click', function() {
-        // Animation on click
-        this.classList.add('btn-loading');
-        setTimeout(() => {
-            this.classList.remove('btn-loading');
-            alert('🎨 Fitur filter dengan SAMU theme akan segera hadir!');
-        }, 300);
-    });
 
     // Add smooth scroll behavior
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

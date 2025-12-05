@@ -244,4 +244,9 @@ Route::get('/simulasi-overrange', function () {
     return app(\App\Http\Controllers\Api\TelemetryController::class)->receive($request);
 });
 
+        Route::post('/notifications/read-all', function () {
+            auth()->user()->unreadNotifications->markAsRead();
+            return back();
+        })->name('notifications.readAll');
+
 });

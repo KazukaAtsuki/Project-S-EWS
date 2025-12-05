@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<!-- 1. Filter Section -->
+<!-- 1. Filter Section (Tetap Rounded) -->
 <div class="card border-0 shadow-sm samu-filter-card mb-4">
     <div class="card-header bg-white border-bottom py-3">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
@@ -100,7 +100,7 @@
     </div>
 </div>
 
-<!-- 2. Analytics Section (Chart) -->
+<!-- 2. Analytics Section (Tetap Rounded) -->
 <div class="card border-0 shadow-sm samu-chart-card mb-4">
     <div class="card-header bg-white border-bottom py-3">
         <div class="d-flex align-items-center">
@@ -120,7 +120,7 @@
     </div>
 </div>
 
-<!-- 3. Data Table Section -->
+<!-- 3. Data Table Section (MODIFIKASI: NO RADIUS) -->
 <div class="card border-0 shadow-sm samu-table-card">
     <div class="card-header bg-white border-bottom py-3">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
@@ -180,8 +180,6 @@
         --samu-gray: #6c757d;
     }
 
-    /* ... (CSS Header & Card lainnya biarkan saja) ... */
-
     /* ========================================
        TABLE HEADER STYLING (DIPERBAIKI)
        ======================================== */
@@ -190,25 +188,26 @@
     }
 
     .samu-table thead th {
-        color: #ffffff !important; /* UBAH JADI PUTIH TEBAL */
+        color: #ffffff !important;
         font-weight: 700;
         text-transform: uppercase;
-        font-size: 0.85rem; /* Sedikit diperbesar */
+        font-size: 0.85rem;
         letter-spacing: 0.5px;
         padding: 1rem 0.75rem;
         border: none;
         vertical-align: middle;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.1); /* Tambah shadow biar makin jelas */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
 
+    /* [MODIFIKASI] Hapus radius di header table agar kotak */
     .samu-table thead th:first-child {
-        border-top-left-radius: 0.75rem;
+        border-top-left-radius: 0 !important;
     }
 
     .samu-table thead th:last-child {
-        border-top-right-radius: 0.75rem;
+        border-top-right-radius: 0 !important;
     }
-    
+
     /* ========================================
        FILTER CARD
        ======================================== */
@@ -305,10 +304,10 @@
     }
 
     /* ========================================
-       TABLE CARD
+       TABLE CARD (MODIFIKASI: RADIUS 0)
        ======================================== */
     .samu-table-card {
-        border-radius: 1.25rem !important;
+        border-radius: 0 !important; /* UBAH JADI 0 (KOTAK) */
         border: 2px solid #e8ecef;
     }
 
@@ -327,29 +326,6 @@
     /* Table Styling */
     .samu-table {
         margin-bottom: 0;
-    }
-
-    .samu-table thead {
-        background: linear-gradient(135deg, var(--samu-blue) 0%, var(--samu-cyan) 100%);
-    }
-
-    .samu-table thead th {
-        color: white;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
-        padding: 1rem 0.75rem;
-        border: none;
-        vertical-align: middle;
-    }
-
-    .samu-table thead th:first-child {
-        border-top-left-radius: 0.75rem;
-    }
-
-    .samu-table thead th:last-child {
-        border-top-right-radius: 0.75rem;
     }
 
     .samu-table tbody tr {
@@ -409,60 +385,81 @@
     }
 
     /* ========================================
-       STATUS BADGES (for table data)
+       STATUS BADGES
        ======================================== */
     .badge.badge-abnormal {
         background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
         color: white;
     }
-
     .badge.badge-overrange {
         background: linear-gradient(135deg, var(--samu-blue) 0%, var(--samu-blue-light) 100%);
         color: white;
     }
-
     .badge.badge-not-recorded {
         background: linear-gradient(135deg, var(--samu-gold) 0%, var(--samu-gold-light) 100%);
         color: white;
     }
-
     .badge.badge-not-sent {
         background: linear-gradient(135deg, var(--samu-cyan) 0%, var(--samu-cyan-light) 100%);
         color: white;
     }
-
     .badge.badge-normal {
         background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
         color: white;
     }
 
     /* ========================================
-       RESPONSIVE
+       PAGE HEADER (Tetap Rounded)
        ======================================== */
-    @media (max-width: 768px) {
-        .samu-period-group {
-            margin-top: 1rem;
-            width: 100%;
-        }
+    .samu-page-header {
+        border-radius: 1.25rem !important;
+        border-left: 5px solid var(--samu-gold);
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    }
+    .samu-icon-header {
+        width: 60px;
+        height: 60px;
+        border-radius: 1rem;
+        background: linear-gradient(135deg, var(--samu-blue) 0%, var(--samu-cyan) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.75rem;
+        box-shadow: 0 4px 15px rgba(30, 107, 168, 0.2);
+    }
+    .samu-btn-export {
+        background: linear-gradient(135deg, var(--samu-gold) 0%, var(--samu-gold-light) 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.65rem 1.5rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(212, 161, 42, 0.25);
+    }
+    .samu-btn-export:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(212, 161, 42, 0.35);
+        color: white;
+    }
 
-        .samu-period-btn {
-            font-size: 0.85rem;
-            padding: 0.5rem 0.75rem;
-        }
-
-        .samu-icon-header {
-            width: 50px;
-            height: 50px;
-            font-size: 1.5rem;
-        }
-
-        .samu-btn-export {
-            width: 100%;
-        }
-
-        .table-responsive {
-            border-radius: 0.75rem;
-        }
+    /* ========================================
+       ACTIVE STATE (Efek Tekan)
+       ======================================== */
+    .samu-btn-export:active,
+    .samu-btn-apply:active {
+        transform: translateY(0) scale(0.95) !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        transition: all 0.1s;
+    }
+    .samu-period-btn:active {
+        background-color: var(--samu-blue-soft);
+        transform: scale(0.95);
+    }
+    .samu-table tbody tr:active {
+        background-color: var(--samu-cyan-soft) !important;
+        transform: scale(0.99);
     }
 
     /* ========================================
@@ -477,7 +474,6 @@
         border-top-color: #fff;
         animation: spin 1s ease-in-out infinite;
     }
-
     @keyframes spin {
         to { transform: rotate(360deg); }
     }

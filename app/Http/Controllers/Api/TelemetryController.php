@@ -7,56 +7,80 @@ use Illuminate\Http\Request;
 use App\Models\Stack;
 use App\Models\Parameter;
 use App\Models\MonitoringLog;
+use App\Models\NotificationSetting;
+use App\Models\ReceiverNotification;
+use App\Services\TelegramService;
+use App\Mail\EwsAlertMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+
+// --- [IMPORT BARU UNTUK NOTIFIKASI] ---
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\EwsAlertNotification;
 
 class TelemetryController extends Controller
 {
-    /**
-     * Endpoint untuk menerima data sensor (POST)
-     *
-     * Note: Logika Notifikasi (Alert Abnormal/Overrange) sudah dipindahkan
-     * ke Scheduler (CheckDeviceActivity) agar API ini berjalan ringan (Lightweight).
-     */
     public function receive(Request $request)
     {
-        // 1. VALIDASI INPUT
-        // Memastikan sensor mengirim format yang benar
+        // 1. Validasi & Cari Data (Biarkan kode lama kamu di sini)
         $request->validate([
-            'stack_code'     => 'required|string', // Contoh: ST-01
-            'parameter_code' => 'required|string', // Contoh: CO
-            'value'          => 'required|numeric', // Contoh: 150
+            'stack_code' => 'required',
+            'parameter_code' => 'required',
+            'value' => 'required|numeric',
         ]);
 
-        // 2. CARI DATA MASTER
-        // Kita perlu ID dari Stack dan Parameter untuk disimpan di log
         $stack = Stack::where('government_code', $request->stack_code)->first();
         $parameter = Parameter::where('name', $request->parameter_code)->first();
 
-        // Jika Stack atau Parameter tidak dikenali di database, tolak request
         if (!$stack || !$parameter) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Data Stack atau Parameter tidak ditemukan di Database Master.'
-            ], 404);
+            return response()->json(['status' => 'error'], 404);
         }
 
-        // 3. SIMPAN LOG MONITORING
-        // Simpan data ke database. Nanti Robot Scheduler yang akan mengecek data ini tiap menit.
-        $log = MonitoringLog::create([
-            'stack_id'     => $stack->id,
+        MonitoringLog::create([
+            'stack_id' => $stack->id,
             'parameter_id' => $parameter->id,
-            'value'        => $request->value
+            'value' => $request->value
         ]);
 
-        // 4. RESPONSE SUKSES
-        // Berikan info balik ke sensor/client bahwa data aman tersimpan
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data received & saved. Analysis will be done by Scheduler.',
-            'data' => [
-                'log_id' => $log->id,
-                'timestamp' => $log->created_at->format('Y-m-d H:i:s'),
-                'value_recorded' => $log->value
-            ]
-        ], 201); // Kode 201 artinya Created (Berhasil dibuat)
+        // 4. LOGIKA EWS (JIKA BAHAYA)
+        if ($request->value > $parameter->max_threshold) {
+
+            $statusType = 'ABNORMAL';
+            if ($request->value >= ($parameter->max_threshold * 2)) {
+                $statusType = 'OVERRANGE';
+            }
+
+            // ... (Kode Kirim Telegram Kamu di sini) ...
+            // ... (Kode Kirim Email Kamu di sini) ...
+
+            // ==========================================================
+            // --- C. KIRIM NOTIFIKASI DATABASE (Tempel Disini) ---
+            // ==========================================================
+
+            // Siapkan data
+            $notifData = [
+                'status'     => $statusType,
+                'stack_name' => $stack->stack_name,
+                'parameter'  => $parameter->name,
+                'value'      => $request->value,
+                'unit'       => $parameter->unit,
+            ];
+
+            // Kirim ke SEMUA USER yang role-nya Admin & NOC
+            $usersToNotify = User::whereIn('role', ['Admin', 'NOC'])->get();
+
+            // Jalankan Notifikasi
+            if($usersToNotify->count() > 0) {
+                Notification::send($usersToNotify, new EwsAlertNotification($notifData));
+            }
+
+            // ==========================================================
+
+            return response()->json(['status' => 'warning', 'message' => 'Alert Sent!']);
+        }
+
+        return response()->json(['status' => 'success']);
     }
 }

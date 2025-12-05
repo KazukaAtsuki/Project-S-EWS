@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Dashboard') - CEMS EWS Admin</title>
-
-    <meta name="description" content="" />
+    <title>@yield('title', 'Dashboard') - SAMU EWS</title>
+    <meta name="description" content="SAMU Early Warning System Platform" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon.ico') }}" />
@@ -33,96 +32,135 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 
-    <!-- Custom DataTables Styling -->
+    <!-- GLOBAL STYLES (Dark Mode & Mobile Fixes) -->
     <style>
-        /* DataTables Custom Styling */
-        .dataTables_wrapper .dataTables_filter input {
-            margin-left: 0.5rem;
-            border-radius: 0.375rem;
+        /* ==================================================================
+           GLOBAL DARK MODE VARIABLES & OVERRIDES
+           ================================================================== */
+        [data-theme="dark"] {
+            --bs-body-bg: #0f111a;
+            --bs-body-color: #a0a6b1;
+            --bs-heading-color: #e4e6eb;
+            --samu-card-bg: #1c1f2e;
+            --samu-border-color: #2d324a;
+            --samu-input-bg: #151824;
         }
 
-        .dataTables_wrapper .dataTables_length select {
-            margin: 0 0.5rem;
-            border-radius: 0.375rem;
+        [data-theme="dark"] body {
+            background-color: var(--bs-body-bg) !important;
+            color: var(--bs-body-color) !important;
         }
 
-        .dataTables_wrapper .dataTables_info {
-            padding-top: 0.85rem;
+        [data-theme="dark"] .card,
+        [data-theme="dark"] .layout-menu,
+        [data-theme="dark"] .layout-navbar,
+        [data-theme="dark"] .footer,
+        [data-theme="dark"] .dropdown-menu,
+        [data-theme="dark"] .modal-content {
+            background-color: var(--samu-card-bg) !important;
+            border-color: var(--samu-border-color) !important;
+            color: var(--bs-heading-color) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
         }
 
-        .dataTables_wrapper .dataTables_paginate {
-            padding-top: 0.5rem;
+        [data-theme="dark"] .text-dark,
+        [data-theme="dark"] .fw-bold,
+        [data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3,
+        [data-theme="dark"] h4, [data-theme="dark"] h5, [data-theme="dark"] h6,
+        [data-theme="dark"] strong, [data-theme="dark"] b {
+            color: #e4e6eb !important;
         }
 
-        #levelsTable thead th,
-        #usersTable thead th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            border-bottom: 2px solid #dee2e6;
+        [data-theme="dark"] .text-muted {
+            color: #788393 !important;
         }
 
-        .dataTables_processing {
-            position: fixed !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: 1px solid #dee2e6 !important;
-            padding: 2rem !important;
-            border-radius: 8px !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-            z-index: 9999 !important;
+        [data-theme="dark"] .bg-white {
+            background-color: var(--samu-card-bg) !important;
         }
 
-        .dataTables_processing::before {
-            content: '';
-            display: inline-block;
-            width: 2rem;
-            height: 2rem;
-            border: 3px solid #696cff;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-            margin-right: 1rem;
-            vertical-align: middle;
+        [data-theme="dark"] .bg-light,
+        [data-theme="dark"] .app-brand {
+            background-color: #151824 !important;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select,
+        [data-theme="dark"] .input-group-text {
+            background-color: var(--samu-input-bg) !important;
+            border-color: var(--samu-border-color) !important;
+            color: #e4e6eb !important;
         }
 
-        /* Responsive Table */
-        .table-responsive {
-            border-radius: 0.5rem;
+        [data-theme="dark"] .table {
+            color: var(--bs-body-color) !important;
+            border-color: var(--samu-border-color) !important;
         }
 
-        /* Badge Styling */
-        .badge {
-            padding: 0.35em 0.65em;
-            font-size: 0.875rem;
-            font-weight: 500;
+        [data-theme="dark"] .table thead th {
+            background-color: #252a3d !important;
+            color: #e4e6eb !important;
+            border-bottom-color: var(--samu-border-color) !important;
         }
 
-        /* Button Gap */
-        .d-flex.gap-2 {
-            gap: 0.5rem !important;
+        [data-theme="dark"] .table-hover tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
         }
 
-        /* Alert Auto Dismiss Animation */
+        [data-theme="dark"] .border-bottom,
+        [data-theme="dark"] .border-top,
+        [data-theme="dark"] .border-end,
+        [data-theme="dark"] .border-start,
+        [data-theme="dark"] .border,
+        [data-theme="dark"] hr {
+            border-color: var(--samu-border-color) !important;
+        }
+
+        /* ==========================================
+           MOBILE RESPONSIVE FIXES (< 768px)
+           ========================================== */
+        @media (max-width: 767.98px) {
+            .samu-navbar { padding: 0.5rem !important; }
+            .samu-search-group { width: 100% !important; margin-bottom: 10px; }
+            .navbar-nav-right {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 10px;
+                width: 100%;
+            }
+            .navbar-nav.flex-row {
+                width: 100%;
+                justify-content: flex-end;
+                margin-top: -50px;
+            }
+            .samu-divider, .samu-date-text, .samu-widget-box, .user-name-text {
+                display: none !important;
+            }
+            .samu-page-header .card-body { padding: 1.25rem !important; text-align: center; }
+            .samu-page-header .d-flex { flex-direction: column; gap: 15px; }
+            .samu-btn-primary, .btn { width: 100%; display: block; margin-bottom: 5px; }
+
+            /* Table Scroll Fix */
+            .table-responsive {
+                border: 1px solid #eee;
+                border-radius: 10px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .samu-table th, .samu-table td {
+                white-space: nowrap;
+                font-size: 0.8rem;
+                padding: 0.75rem 0.5rem;
+            }
+            .modal-dialog { margin: 0.5rem; }
+        }
+
+        /* Alert Animation */
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .alert {
-            animation: slideDown 0.3s ease-out;
-        }
+        .alert { animation: slideDown 0.3s ease-out; }
     </style>
 
     <!-- Page CSS -->
@@ -189,33 +227,60 @@
     <!-- Main JS -->
     <script src="{{ asset('assets/js/main.js') }}"></script>
 
-    <!-- Global DataTables Configuration -->
+    <!-- Global Logic (Dark Mode & DataTables) -->
     <script>
-        // Set default DataTables configuration
+        // --- 1. GLOBAL DARK MODE LOGIC ---
+        (function() {
+            const savedTheme = localStorage.getItem('samu_theme');
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+
+            // Apply Theme saat loading
+            if (savedTheme === 'dark') {
+                body.setAttribute('data-theme', 'dark');
+                if(themeIcon) themeIcon.classList.replace('bx-moon', 'bx-sun');
+            }
+
+            // Fungsi Toggle (Dipanggil dari Navbar)
+            window.toggleSamuTheme = function() {
+                const currentTheme = body.getAttribute('data-theme');
+                const icon = document.getElementById('themeIcon');
+
+                if (currentTheme === 'dark') {
+                    body.removeAttribute('data-theme');
+                    localStorage.setItem('samu_theme', 'light');
+                    if(icon) icon.classList.replace('bx-sun', 'bx-moon');
+                } else {
+                    body.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('samu_theme', 'dark');
+                    if(icon) icon.classList.replace('bx-moon', 'bx-sun');
+                }
+            }
+        })();
+
+        // --- 2. GLOBAL DATATABLES CONFIG ---
         $.extend(true, $.fn.dataTable.defaults, {
             language: {
-                processing: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div> Loading...',
-                search: "Search:",
-                lengthMenu: "Show _MENU_ entries",
-                info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                infoEmpty: "Showing 0 to 0 of 0 entries",
-                infoFiltered: "(filtered from _MAX_ total entries)",
-                zeroRecords: "No matching records found",
-                emptyTable: "No data available in table",
+                processing: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                search: "_INPUT_",
+                searchPlaceholder: "Search...",
+                lengthMenu: "_MENU_",
+                info: "Showing _START_ to _END_ of _TOTAL_",
                 paginate: {
-                    first: "First",
-                    last: "Last",
-                    next: "Next",
-                    previous: "Previous"
+                    first: '<i class="bx bx-chevrons-left"></i>',
+                    last: '<i class="bx bx-chevrons-right"></i>',
+                    next: '<i class="bx bx-chevron-right"></i>',
+                    previous: '<i class="bx bx-chevron-left"></i>'
                 }
             },
             pageLength: 10,
-            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             responsive: true,
-            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip'
+            scrollX: true, // Wajib untuk mobile responsive
+            autoWidth: false,
+            dom: '<"row mx-2 py-3"<"col-md-6"l><"col-md-6 d-flex justify-content-end"f>>t<"row mx-2 py-3"<"col-md-6"i><"col-md-6 d-flex justify-content-end"p>>'
         });
 
-        // Auto dismiss alerts after 5 seconds
+        // --- 3. AUTO DISMISS ALERTS ---
         $(document).ready(function() {
             setTimeout(function() {
                 $('.alert:not(.alert-permanent)').fadeOut('slow', function() {

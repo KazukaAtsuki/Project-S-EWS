@@ -48,10 +48,9 @@
     <div class="col-12">
         <div class="card border-0 shadow-sm rounded-4">
 
-            <!-- Search & Filter (Optional Header inside Card) -->
+            <!-- Search & Filter -->
             <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold text-muted" style="font-size: 0.9rem; letter-spacing: 0.5px;">DATA LIST</h5>
-                <!-- Search Bar Dummy (Functional Search is usually handled by Yajra/JS, but kept here for layout) -->
                 <div class="input-group" style="max-width: 250px;">
                     <span class="input-group-text border-0 bg-light ps-3"><i class="bx bx-search text-muted"></i></span>
                     <input type="text" class="form-control border-0 bg-light shadow-none" placeholder="Search companies...">
@@ -143,26 +142,26 @@
                                     </span>
                                 </td>
 
-                                <!-- Action -->
+                                <!-- Action Buttons (Updated: Side by Side) -->
                                 <td class="text-center">
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="bx bx-dots-vertical-rounded text-muted fs-4"></i>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <!-- Edit Button (Orange/Yellow) -->
+                                        <button type="button" class="btn btn-icon btn-sm btn-warning"
+                                            onclick="editCompany({{ $company->id }}, '{{ $company->company_code }}', '{{ $company->name }}', {{ $company->industry_id }}, '{{ $company->contact_person }}', '{{ $company->contact_phone }}')"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                                            <i class="bx bx-edit text-white"></i>
                                         </button>
-                                        <div class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-                                            <a class="dropdown-item" href="javascript:void(0);"
-                                               onclick="editCompany({{ $company->id }}, '{{ $company->company_code }}', '{{ $company->name }}', {{ $company->industry_id }}, '{{ $company->contact_person }}', '{{ $company->contact_phone }}')">
-                                                <i class="bx bx-edit-alt me-2 text-warning"></i> Edit
-                                            </a>
-                                            <form action="{{ route('master.companies.destroy', $company->id) }}" method="POST" class="d-inline"
-                                                onsubmit="return confirm('Are you sure you want to delete this company?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item text-danger">
-                                                    <i class="bx bx-trash me-2"></i> Delete
-                                                </button>
-                                            </form>
-                                        </div>
+
+                                        <!-- Delete Button (Red) -->
+                                        <form action="{{ route('master.companies.destroy', $company->id) }}" method="POST" class="d-inline"
+                                            onsubmit="return confirm('Are you sure you want to delete this company?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-icon btn-sm btn-danger"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                                                <i class="bx bx-trash text-white"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -372,6 +371,23 @@
         color: white;
     }
 
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: none;
+    }
+
+    .btn-icon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
     /* Form Controls */
     .samu-input, .samu-select {
         border: 2px solid #e8ecef;
@@ -397,16 +413,22 @@
 
 @push('scripts')
 <script>
-function editCompany(id, code, name, industry_id, contact_person, contact_phone) {
-    document.getElementById('editCompanyForm').action = `/master/companies/${id}`;
-    document.getElementById('edit_company_code').value = code;
-    document.getElementById('edit_name').value = name;
-    document.getElementById('edit_industry_id').value = industry_id;
-    document.getElementById('edit_contact_person').value = contact_person;
-    document.getElementById('edit_contact_phone').value = contact_phone;
+    // Enable Tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 
-    var modal = new bootstrap.Modal(document.getElementById('editCompanyModal'));
-    modal.show();
-}
+    function editCompany(id, code, name, industry_id, contact_person, contact_phone) {
+        document.getElementById('editCompanyForm').action = `/master/companies/${id}`;
+        document.getElementById('edit_company_code').value = code;
+        document.getElementById('edit_name').value = name;
+        document.getElementById('edit_industry_id').value = industry_id;
+        document.getElementById('edit_contact_person').value = contact_person;
+        document.getElementById('edit_contact_phone').value = contact_phone;
+
+        var modal = new bootstrap.Modal(document.getElementById('editCompanyModal'));
+        modal.show();
+    }
 </script>
 @endpush

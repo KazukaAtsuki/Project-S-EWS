@@ -15,18 +15,18 @@
         <div class="navbar-nav-right d-flex align-items-center justify-content-between w-100" id="navbar-collapse">
 
             <!-- LEFT SIDE: Search & Widgets -->
-            <div class="d-flex align-items-center gap-4">
+            <div class="d-flex align-items-center gap-4 w-100 w-md-auto">
 
                 <!-- 1. Modern Search Bar -->
-                <div class="navbar-nav align-items-center">
-                    <div class="nav-item d-flex align-items-center">
-                        <div class="input-group samu-search-group">
+                <div class="navbar-nav align-items-center w-100 w-md-auto">
+                    <div class="nav-item d-flex align-items-center w-100">
+                        <div class="input-group samu-search-group w-100">
                             <span class="input-group-text border-0 bg-transparent ps-3">
                                 <i class="bx bx-search fs-4 text-muted"></i>
                             </span>
                             <input type="text" class="form-control border-0 bg-transparent shadow-none"
                                    placeholder="Search..." aria-label="Search...">
-                            <span class="input-group-text border-0 bg-transparent pe-3">
+                            <span class="input-group-text border-0 bg-transparent pe-3 d-none d-md-flex">
                                 <span class="badge samu-badge-shortcut">Ctrl + K</span>
                             </span>
                         </div>
@@ -34,14 +34,16 @@
                 </div>
 
                 <!-- 2. System Status Widget -->
-                <div class="d-none d-xl-flex align-items-center samu-widget-box px-3 py-1 rounded-pill">
+                <div class="d-none d-xl-flex align-items-center samu-widget-box px-3 py-1 rounded-pill bg-light">
                     <span class="position-relative d-flex h-2 w-2 me-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full {{ $sysPulse ?? 'bg-success' }} opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 {{ $sysPulse ?? 'bg-success' }}"></span>
                     </span>
                     <div class="d-flex flex-column">
                         <small class="text-muted" style="font-size: 0.65rem; line-height: 1;">SYSTEM STATUS</small>
-                        <span class="text-success fw-bold" style="font-size: 0.75rem;">OPTIMAL</span>
+                        <span class="text-{{ $sysColor ?? 'success' }} fw-bold" style="font-size: 0.75rem;">
+                            {{ $sysStatus ?? 'OPTIMAL' }}
+                        </span>
                     </div>
                 </div>
 
@@ -65,7 +67,6 @@
                 <!-- [NEW] Dark Mode Toggle -->
                 <li class="nav-item me-2">
                     <a class="nav-link samu-icon-btn" href="javascript:void(0);" id="themeToggle" title="Switch Theme">
-                        <!-- Ikon akan berubah lewat JS -->
                         <i class="bx bx-moon bx-sm" id="themeIcon"></i>
                     </a>
                 </li>
@@ -78,14 +79,67 @@
                     <span class="fw-bold text-dark user-name-text">{{ explode(' ', auth()->user()->name)[0] }}</span>
                 </li>
 
-                <!-- Notification -->
-                <li class="nav-item me-3">
-                    <a class="nav-link position-relative samu-icon-btn" href="javascript:void(0);">
+                <!-- [FIXED] Notification Dropdown -->
+                <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3">
+                    <!-- Tambahkan data-bs-toggle="dropdown" agar bisa diklik -->
+                    <a class="nav-link dropdown-toggle hide-arrow samu-icon-btn" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                         <i class="bx bx-bell bx-sm"></i>
-                        <span class="badge rounded-pill samu-badge-notif position-absolute">
-                            3
-                        </span>
+                        <!-- Badge Jumlah Notif -->
+                        @if(auth()->user()->unreadNotifications->count() > 0)
+                            <span class="badge rounded-pill samu-badge-notif position-absolute">
+                                {{ auth()->user()->unreadNotifications->count() }}
+                            </span>
+                        @endif
                     </a>
+
+                    <!-- Isi Dropdown Notifikasi -->
+                    <ul class="dropdown-menu dropdown-menu-end py-0 samu-dropdown-menu shadow-lg">
+                        <li class="dropdown-header border-bottom p-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="fw-bold text-dark">Notifications</span>
+                                @if(auth()->user()->unreadNotifications->count() > 0)
+                                    <form action="{{ route('notifications.readAll') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-xs btn-link text-primary p-0" style="font-size: 0.75rem;">
+                                            Mark all as read
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </li>
+                        <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                            @forelse(auth()->user()->notifications as $notification)
+                                <a href="{{ $notification->data['link'] ?? '#' }}" class="list-group-item list-group-item-action dropdown-item {{ $notification->read_at ? '' : 'bg-label-secondary' }}">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0 me-3">
+                                            <div class="avatar">
+                                                <span class="avatar-initial rounded-circle bg-label-{{ $notification->data['color'] ?? 'primary' }}">
+                                                    <i class='bx {{ $notification->data['icon'] ?? 'bx-bell' }}'></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 small fw-bold text-dark">{{ $notification->data['title'] ?? 'Notification' }}</h6>
+                                            <p class="mb-0 small text-muted">{{ Str::limit($notification->data['message'] ?? '', 50) }}</p>
+                                            <small class="text-muted" style="font-size: 0.65rem;">
+                                                {{ $notification->created_at->diffForHumans() }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </a>
+                            @empty
+                                <div class="text-center p-4">
+                                    <i class="bx bx-bell-off fs-1 text-muted mb-2"></i>
+                                    <p class="mb-0 small text-muted">No notifications yet.</p>
+                                </div>
+                            @endforelse
+                        </div>
+                        <li class="dropdown-menu-footer border-top p-2 text-center">
+                            <a href="{{ route('monitoring.index') }}" class="small fw-bold text-primary">
+                                View All Alerts
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <!-- User Profile Dropdown -->
